@@ -26,7 +26,10 @@ def __detail_get(request, user_id):
 	try:
 		user = User.objects.get(pk=user_id)
 	except User.DoesNotExist:
-		return JsonResponse({"ok" : False})
+		return JsonResponse({
+			"ok" : False,
+			"error": "User does not exist"
+			})
 	
 	fields = [
 		"first_name", 
@@ -54,7 +57,10 @@ def __detail_post(request, user_id):
 	user_form = UserForm(request.POST)
 
 	if not user_form.is_valid():
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+			"ok": False,
+			"error": user_form.errors
+			})
 
 	# Do not commit the changes yet
 	new_user = user_form.save(commit=False)
@@ -76,7 +82,9 @@ def __detail_delete(request, user_id):
 	try:
 		user = User.objects.get(pk=user_id)
 	except User.DoesNotExist:
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+			"ok": False,
+			"error": "User does not exist"})
 
 	user.delete()
 
@@ -93,7 +101,10 @@ def create(request):
 	user_form = UserForm(request.POST)
 
 	if not user_form.is_valid():
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+			"ok": False,
+			"error": user_form.errors
+			})
 
 	new_user = user_form.save()
 

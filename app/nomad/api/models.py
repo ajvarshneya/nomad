@@ -63,6 +63,7 @@ class Reservation(models.Model):
 class ReservationForm(ModelForm):
 	class Meta:
 		model = Reservation
+		#exclude = ['user','listing']
 		fields = '__all__'
 
 class Review(models.Model):
