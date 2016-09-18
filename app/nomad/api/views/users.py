@@ -5,9 +5,7 @@ from api.models import *
 def index(request):
 	users = User.objects.all()
 
-	user_dict_list = []
-	for user in users:
-		user_dict_list.append(model_to_dict(user))
+	user_dict_list = [model_to_dict(user) for user in users]
 
 	response = {
 		"ok": True,
