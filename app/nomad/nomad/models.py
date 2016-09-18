@@ -1,12 +1,20 @@
 from django.db import models
 
 class User(models.Model):
+	# Contact info
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
+    phone_number = models.CharField(max_length=11)
+
+    # Login info
     password = models.CharField(max_length=100)
     username = models.CharField(max_length=50)
+
+    # Payment info
     creditcard = models.CharField(max_length=17)
+
+    # Address info
     street = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
@@ -30,7 +38,16 @@ class Listing(models.Model):
 	baths = DecimalField(max_digits=4, decimal_places=1)
 
 class Reservation(models.Model):
-	pass
+	start_date = models.DateTimeField()
+	end_date = models.DateTimeField()
+	is_available = models.BooleanField()
+
+	# Every Reservation has one User (the person who reserved), but a User can have
+	# many Reservations
+	user = models.ForeignKey(User)
+
+	# Every Reservation has one Listing, but a Listing can have many Reservations
+	listing = models.ForeignKey(Listing)
 
 class Review(models.Model):
 	title = models.CharField(50)
