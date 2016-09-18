@@ -31,11 +31,11 @@ class Listing(models.Model):
 	zipcode = models.CharField(max_length=9)
 
 	# Number of beds available
-	beds = IntegerField(default=1)
+	beds = models.IntegerField(default=1)
 
 	# Number of baths as a decimal number with format ###.#
 	# This allows users to specify 2.5 baths, etc.
-	baths = DecimalField(max_digits=4, decimal_places=1)
+	baths = models.DecimalField(max_digits=4, decimal_places=1)
 
 class Reservation(models.Model):
 	start_date = models.DateTimeField()
@@ -50,7 +50,7 @@ class Reservation(models.Model):
 	listing = models.ForeignKey(Listing)
 
 class Review(models.Model):
-	title = models.CharField(50)
+	title = models.CharField(max_length=50)
 	comment = models.TextField(max_length=1000)
 
 	# Rating from 1-5
@@ -64,7 +64,7 @@ class Review(models.Model):
 	listing = models.ForeignKey(Listing)
 
 class Tag(models.Model):
-	text = models.CharField(20)
+	text = models.CharField(max_length=20)
 
 	# A Tag can have many Listings, and a Listing can have many Tags
 	listings = models.ManyToManyField(Listing)
