@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 
 class User(models.Model):
 	# Contact info
@@ -19,6 +20,23 @@ class User(models.Model):
     city = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
     zipcode = models.CharField(max_length=9)
+
+class UserForm(ModelForm):
+	class Meta:
+		model = User
+		fields = [
+			'first_name',
+			'last_name',
+			'email',
+			'phone_number',
+			'password',
+			'username',
+			'creditcard',
+			'street',
+			'city',
+			'country',
+			'zipcode'
+		]
 
 class Listing(models.Model):
 	# Every Listing has one User, but a User can have many Listings
