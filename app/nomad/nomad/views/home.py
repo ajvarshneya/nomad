@@ -4,6 +4,6 @@ from django.template import loader
 def index(request):
 	template = loader.get_template('nomad/index.html')
 	context = {
-		'message': "Hello, world!",
+		'message': "hacking intensifies!",
 	}
 	return HttpResponse(template.render(context, request))	
