@@ -2,6 +2,20 @@ from django.http import JsonResponse, QueryDict
 from django.forms.models import model_to_dict
 from api.models import *
 
+def index(request):
+	users = User.objects.all()
+
+	user_dict_list = []
+	for user in users:
+		user_dict_list.append(model_to_dict(user))
+
+	response = {
+		"ok": True,
+		"result": user_dict_list
+	}
+
+	return JsonResponse(response)
+
 def detail(request, user_id):
 	if request.method == "GET":
 		return __detail_get(request, user_id)
@@ -14,7 +28,7 @@ def __detail_get(request, user_id):
 	try:
 		user = User.objects.get(pk=user_id)
 	except User.DoesNotExist:
-		return JsonResponse({"ok" : False})	
+		return JsonResponse({"ok" : False})
 	
 	fields = [
 		"first_name", 
@@ -31,12 +45,12 @@ def __detail_get(request, user_id):
 
 	truncated_user_dict = { k : user_dict[k] for k in user_dict if k in fields}
 
-	result = {
+	response = {
 		"ok": True,
 		"result": truncated_user_dict
 	}
 
-	return JsonResponse(result, safe=False)
+	return JsonResponse(response)
 
 def __detail_post(request, user_id):
 	user_form = UserForm(request.POST)
@@ -53,12 +67,12 @@ def __detail_post(request, user_id):
 
 	user_dict = model_to_dict(new_user)
 
-	result = {
+	response = {
 		"ok": True,
 		"result": user_dict,
 	}
 
-	return JsonResponse(result)
+	return JsonResponse(response)
 
 def __detail_delete(request, user_id):
 	try:
@@ -68,14 +82,14 @@ def __detail_delete(request, user_id):
 
 	user.delete()
 
-	result = {
+	response = {
 		"ok": True,
 		"result": {
 			"id": user_id
 		}
 	}
 
-	return JsonResponse(result)
+	return JsonResponse(response)
 
 def create(request):
 	user_form = UserForm(request.POST)
@@ -87,11 +101,11 @@ def create(request):
 
 	user_dict = model_to_dict(new_user)
 
-	result = {
+	response = {
 		"ok": True,
 		"result": user_dict,
 	}
 
-	return JsonResponse(result)
+	return JsonResponse(response)
 
 

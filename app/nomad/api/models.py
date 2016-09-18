@@ -24,19 +24,7 @@ class User(models.Model):
 class UserForm(ModelForm):
 	class Meta:
 		model = User
-		fields = [
-			'first_name',
-			'last_name',
-			'email',
-			'phone_number',
-			'password',
-			'username',
-			'creditcard',
-			'street',
-			'city',
-			'country',
-			'zipcode'
-		]
+		fields = '__all__'
 
 class Listing(models.Model):
 	# Every Listing has one User, but a User can have many Listings
@@ -58,15 +46,7 @@ class Listing(models.Model):
 class ListingForm(ModelForm):
 	class Meta:
 		model = Listing
-		fields = [
-			'user',
-			'street',
-			'city',
-			'country',
-			'zipcode',
-			'beds',
-			'baths'
-		]
+		fields = '__all__'
 
 class Reservation(models.Model):
 	start_date = models.DateTimeField()
@@ -83,13 +63,7 @@ class Reservation(models.Model):
 class ReservationForm(ModelForm):
 	class Meta:
 		model = Reservation
-		fields = [
-			'start_date',
-			'end_date',
-			'is_available',
-			'user',
-			'listing'
-		]
+		fields = '__all__'
 
 class Review(models.Model):
 	title = models.CharField(max_length=50)
@@ -108,13 +82,7 @@ class Review(models.Model):
 class ReviewModel(ModelForm):
 	class Meta:
 		model = Review
-		fields = [
-			'title',
-			'comment',
-			'rating',
-			'user',
-			'listing'
-		]
+		fields = '__all__'
 
 class Tag(models.Model):
 	text = models.CharField(max_length=20)
@@ -125,7 +93,4 @@ class Tag(models.Model):
 class TagForm(ModelForm):
 	class Meta:
 		model = Tag
-		fields = [
-			'text',
-			'listing'
-		]
+		fields = '__all__'

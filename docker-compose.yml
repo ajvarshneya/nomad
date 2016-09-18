@@ -1,9 +1,10 @@
 models:
     image: tp33/django
     external_links:
-       - mysql:db
+        - mysql:db
     volumes:
-      - ./app:/app
+        - ./app:/app
     ports:
         - "8000:8000"
+    log_driver: syslog
     command: bash -c "mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
