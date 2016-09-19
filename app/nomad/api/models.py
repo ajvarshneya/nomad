@@ -21,6 +21,9 @@ class User(models.Model):
     country = models.CharField(max_length=50)
     zipcode = models.CharField(max_length=9)
 
+    def __str__(self):
+    	return "{} {} ({})".format(self.first_name, self.last_name, self.email)
+
 class UserForm(ModelForm):
 	class Meta:
 		model = User
@@ -29,6 +32,9 @@ class UserForm(ModelForm):
 class Listing(models.Model):
 	# Every Listing has one User, but a User can have many Listings
 	user = models.ForeignKey(User)
+
+	# Display info
+	title = models.CharField(max_length=50)
 
 	# Address info
 	street = models.CharField(max_length=100)
@@ -42,6 +48,9 @@ class Listing(models.Model):
 	# Number of baths as a decimal number with format ###.#
 	# This allows users to specify 2.5 baths, etc.
 	baths = models.DecimalField(max_digits=4, decimal_places=1)
+
+	def __str__(self):
+		return self.title
 
 class ListingForm(ModelForm):
 	class Meta:
@@ -59,6 +68,9 @@ class Reservation(models.Model):
 
 	# Every Reservation has one Listing, but a Listing can have many Reservations
 	listing = models.ForeignKey(Listing)
+
+	def __str__(self):
+		return "{} - {} ({})".format(self.start_date.date(), self.end_date.date(), self.listing.title)
 
 class ReservationForm(ModelForm):
 	class Meta:
@@ -80,6 +92,9 @@ class Review(models.Model):
 	# Every review has one Listing, but a Listing can have many Reviews
 	listing = models.ForeignKey(Listing)
 
+	def __str__(self):
+		return self.title
+
 class ReviewModel(ModelForm):
 	class Meta:
 		model = Review
@@ -90,6 +105,9 @@ class Tag(models.Model):
 
 	# A Tag can have many Listings, and a Listing can have many Tags
 	listings = models.ManyToManyField(Listing)
+
+	def __str__(self):
+		return self.text
 
 class TagForm(ModelForm):
 	class Meta:
