@@ -64,7 +64,7 @@ class Reservation(models.Model):
 
 	# Every Reservation has one User (the person who reserved), but a User can have
 	# many Reservations
-	user = models.ForeignKey(User)
+	user = models.ForeignKey(User, blank=True, null=True)
 
 	# Every Reservation has one Listing, but a Listing can have many Reservations
 	listing = models.ForeignKey(Listing)

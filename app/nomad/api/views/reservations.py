@@ -4,6 +4,17 @@ from api.models import *
 
 def index(request):
 	reservations = Reservation.objects.all()
+
+	# Filter by user id
+	user_id = int(request.GET.get('user', -1))
+	if user_id != -1:
+		reservations = [res for res in reservations if res.user.id == user_id]
+
+	# Filter by listing id
+	listing_id = int(request.GET.get('listing', -1))
+	if listing_id != -1:
+		reservations = [res for res in reservations if res.listing.id == listing_id]
+
 	res_dict_list = [model_to_dict(reservation) for reservation in reservations]
 	response = {
 		"ok":True,

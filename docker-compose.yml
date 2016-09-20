@@ -7,4 +7,11 @@ models:
     ports:
         - "8000:8000"
     log_driver: syslog
-    command: bash -c "mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
+    command: >
+            bash -c "cd /app/nomad/ && 
+                    python manage.py makemigrations api && 
+                    python manage.py migrate && 
+                    python manage.py loaddata db.json && 
+                    echo 'Done with Django manage.py setup.' && 
+                    echo 'Starting wsgi...' && 
+                    mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
