@@ -66,7 +66,7 @@ def __detail_post(request, user_id):
 	new_user = user_form.save(commit=False)
 
 	# Set the user id to the one in the database and then save
-	new_user.id = user_id
+	new_user.id = int(user_id)
 	new_user.save()
 
 	user_dict = model_to_dict(new_user)
