@@ -3,32 +3,42 @@ models:
     external_links:
         - mysql:db
     volumes:
-        - ./app:/app
+        - ./models-app:/app
     ports:
         - "8001:8000"
-    log_driver: syslog
+    # log_driver: syslog
     command: >
             bash -c "cd /app/nomad/ && 
                     python manage.py makemigrations api && 
                     python manage.py migrate && 
                     python manage.py loaddata db.json && 
                     echo 'Done with Django manage.py setup.' && 
-                    echo 'Starting wsgi...' && 
+                    echo 'Starting model wsgi...' && 
                     mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
 
-# exp:
-#     image: tp33/django
-#     links:
-#         - models:models-api
-#     volumes:
-#         -  
-#     ports:
-#         - "8002:8000"
-# 
-# web:
-#     image: tp33/django
-#     links:
-#         - exp:exp-api
+exp:
+    image: tp33/django
+    links:
+        - models:models-api
+    volumes:
+        - ./exp-app:/app
+    ports:
+        - "8002:8000"
+    command: >
+            bash -c "echo 'Starting exp wsgi...' &&
+                    mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
 
+ 
+web:
+    image: tp33/django
+    links:
+        - exp:exp-api
+    volumes:
+        - ./web-app:/app
+    ports:
+        - "8000:8000"
+    command: >
+            bash -c "echo 'Starting web wsgi...' &&
+                mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
 
 
