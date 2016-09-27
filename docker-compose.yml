@@ -5,7 +5,7 @@ models:
     volumes:
         - ./app:/app
     ports:
-        - "8000:8000"
+        - "8001:8000"
     log_driver: syslog
     command: >
             bash -c "cd /app/nomad/ && 
@@ -15,3 +15,20 @@ models:
                     echo 'Done with Django manage.py setup.' && 
                     echo 'Starting wsgi...' && 
                     mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
+
+# exp:
+#     image: tp33/django
+#     links:
+#         - models:models-api
+#     volumes:
+#         -  
+#     ports:
+#         - "8002:8000"
+# 
+# web:
+#     image: tp33/django
+#     links:
+#         - exp:exp-api
+
+
+
