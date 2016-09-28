@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import *
+from models.models import *
 
 admin.site.register(User)
 

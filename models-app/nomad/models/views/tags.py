@@ -1,6 +1,6 @@
 from django.http import JsonResponse, QueryDict
 from django.forms.models import model_to_dict
-from api.models import Tag, TagForm
+from models.models import Tag, TagForm
 
 def index(request):
 	tags = Tag.objects.all()

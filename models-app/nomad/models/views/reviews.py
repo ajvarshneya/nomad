@@ -1,6 +1,6 @@
 from django.http import JsonResponse, QueryDict
 from django.forms.models import model_to_dict
-from api.models import Review, ReviewForm
+from models.models import Review, ReviewForm
 
 def index(request):
 	reviews = Review.objects.all()

@@ -9,7 +9,7 @@ models:
     # log_driver: syslog
     command: >
             bash -c "cd /app/nomad/ && 
-                    python manage.py makemigrations api && 
+                    python manage.py makemigrations models && 
                     python manage.py migrate && 
                     python manage.py loaddata db.json && 
                     echo 'Done with Django manage.py setup.' && 

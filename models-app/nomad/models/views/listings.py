@@ -1,6 +1,6 @@
 from django.http import JsonResponse, QueryDict
 from django.forms.models import model_to_dict
-from api.models import *
+from models.models import *
 
 def index(request):
 	listings = Listing.objects.all()

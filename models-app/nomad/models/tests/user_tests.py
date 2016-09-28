@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
-from api.models import *
+from models.models import *
 import json
 
 def get_response_result(json_response):
@@ -11,7 +11,7 @@ class UserApiTests(TestCase):
 	fixtures = ['db']
 
 	def test_user_index(self):
-		response = self.client.get('/api/v1/users/')
+		response = self.client.get('/models/api/v1/users/')
 
 		self.assertEqual(response.status_code, 200)
 
@@ -26,7 +26,7 @@ class UserApiTests(TestCase):
 		user = User.objects.get(pk=user_id)
 		user_dict = model_to_dict(user)
 
-		response = self.client.get('/api/v1/users/' + str(user_id) + '/')
+		response = self.client.get('/models/api/v1/users/' + str(user_id) + '/')
 
 		self.assertEqual(response.status_code, 200)
 
@@ -42,7 +42,7 @@ class UserApiTests(TestCase):
 		data['first_name'] = "new first name"
 		data['last_name'] = "new last name"
 
-		response = self.client.post('/api/v1/users/' + str(user_id) + '/', data)
+		response = self.client.post('/models/api/v1/users/' + str(user_id) + '/', data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -58,7 +58,7 @@ class UserApiTests(TestCase):
 
 	def test_user_detail_delete_valid(self):
 		user_id = 1
-		response = self.client.delete('/api/v1/users/' + str(user_id) + '/')
+		response = self.client.delete('/models/api/v1/users/' + str(user_id) + '/')
 
 		self.assertEqual(response.status_code, 200)
 
@@ -79,7 +79,7 @@ class UserApiTests(TestCase):
 			'country': "US",
 			'zipcode': "12345",
 		}
-		response = self.client.post('/api/v1/users/create/', data)
+		response = self.client.post('/models/api/v1/users/create/', data)
 
 		self.assertEqual(response.status_code, 200)
 
