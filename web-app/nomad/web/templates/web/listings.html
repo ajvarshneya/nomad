@@ -1,13 +1,14 @@
 {% extends 'web/__base.html' %}
 
 {% block content %}
-<ul class="list-group">
+<div class="list-group">
   {% for listing in listings %}
-    <li class="list-group-item">{{listing}} <br>
+    <a href="{% url 'web:listings-detail' listing.id %}" class="list-group-item">
+      {{ listing.title }} 
+
+      <div id="item{{ forloop.counter }}" style="width: 60px; height: 60px ; "></div>
+
+    </a>
   {% endfor %}
-  <!--<li class="list-group-item">Cras justo odio</li>
-  <li class="list-group-item">Dapibus ac facilisis in</li>
-  <li class="list-group-item">Morbi leo risus</li>
-  <li class="list-group-item">Porta ac consectetur ac</li>-->
-</ul>
+</div>
 {% endblock %}
