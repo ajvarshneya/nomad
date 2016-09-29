@@ -102,3 +102,8 @@ def create(request):
 	}
 
 	return JsonResponse(response)
+
+#def most_recent(request, count):
+#	listings = Listings.objects.order_by()
+
+#def most_popular(request, count):
