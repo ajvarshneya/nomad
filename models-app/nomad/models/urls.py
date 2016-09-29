@@ -20,6 +20,12 @@ urlpatterns = [
 	# e.g. models/api/v1/listings/1234/
 	url(r'^listings/(?P<listing_id>[0-9]+)/$', views.listings.detail, name='listings-detail'),
 
+	# # e.g. models/api/v1/listings/most-recent/?count=1234
+	# url(r'^listings/most-recent(?P<count>[0-9]+)/$', views.listings.most_recent, name='listings-most-recent'),
+
+	# # e.g. models/api/v1/listings/1234/
+	# url(r'^listings/most-popular(?P<count>[0-9]+)/$', views.listings.most_popular, name='listings-most-popular'),
+
 	# e.g. models/api/v1/listings/create/
 	url(r'^listings/create/$', views.listings.create, name='listings-create'),
 

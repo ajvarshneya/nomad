@@ -6,9 +6,10 @@ from django.http import JsonResponse, QueryDict
 
 # Returns a JSON object of all the listings in the database
 def index(request):
-    
+    response = {}
+
     # Listings model API call
-    index_request = urllib.request.Request('http://models-api:8000/models/api/v1/listings')
+    index_request = urllib.request.Request('http://models-api:8000/models/api/v1/listings/')
     json_index_response = urllib.request.urlopen(index_request).read().decode('utf-8')
     index_response = json.loads(json_index_response)
 
@@ -61,3 +62,8 @@ def detail(request, listing_id):
     response["result"]["reviews"] = reviews_response["result"]
  
     return JsonResponse(response)
+
+# Returns a JSON object for the k most recent listings 
+# def most_recent(request, k):
+#     response = {}
+#     return JsonResponse(response)
