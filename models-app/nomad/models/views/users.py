@@ -5,7 +5,7 @@ from models.models import *
 def index(request):
 	users = User.objects.all()
 
-	user_dict_list = [model_to_dict(user) for user in users]
+	user_dict_list = [__user_to_dict(user) for user in users]
 
 	response = {
 		"ok": True,
@@ -39,10 +39,11 @@ def __detail_get(request, user_id):
 		"street", 
 		"city", 
 		"country", 
-		"zipcode"
+		"zipcode",
+		"profile_image"
 	]
 
-	user_dict = model_to_dict(user)
+	user_dict = __user_to_dict(user)
 
 	truncated_user_dict = { k : user_dict[k] for k in user_dict if k in fields}
 
@@ -69,7 +70,7 @@ def __detail_post(request, user_id):
 	new_user.id = int(user_id)
 	new_user.save()
 
-	user_dict = model_to_dict(new_user)
+	user_dict = __user_to_dict(new_user)
 
 	response = {
 		"ok": True,
@@ -108,7 +109,7 @@ def create(request):
 
 	new_user = user_form.save()
 
-	user_dict = model_to_dict(new_user)
+	user_dict = __user_to_dict(new_user)
 
 	response = {
 		"ok": True,
@@ -117,4 +118,11 @@ def create(request):
 
 	return JsonResponse(response)
 
+def __user_to_dict(user):
+	user_dict = model_to_dict(user)
 
+	# Get profile image for the user and remove redundant user id info on the image
+	user_dict['profile_image'] = model_to_dict(user.profile_image)
+	user_dict['profile_image'].pop('user', None)
+
+	return user_dict

@@ -28,7 +28,6 @@ exp:
             bash -c "echo 'Starting exp wsgi...' &&
                     mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
 
-
 web:
     image: tp33/django
     links:
@@ -40,5 +39,3 @@ web:
     command: >
             bash -c "echo 'Starting web wsgi...' &&
                 mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
-
-

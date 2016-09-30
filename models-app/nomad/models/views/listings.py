@@ -15,7 +15,7 @@ def index(request):
 	if country:
 		listings = [listing for listing in listings if listing.country == country]
 
-	listing_dict_list = [model_to_dict(listing) for listing in listings]
+	listing_dict_list = [__listing_to_dict(listing) for listing in listings]
 
 	response = {
 		"ok": True,
@@ -38,7 +38,7 @@ def __detail_get(request, listing_id):
 	except Listing.DoesNotExist:
 		return JsonResponse({"ok": False})
 
-	listing_dict = model_to_dict(listing)
+	listing_dict = __listing_to_dict(listing)
 
 	response = {
 		"ok": True,
@@ -58,7 +58,7 @@ def __detail_post(request, listing_id):
 	new_listing.id = listing_id
 	new_listing.save()
 
-	listing_dict = model_to_dict(new_listing)
+	listing_dict = __listing_to_dict(new_listing)
 
 	response = {
 		"ok": True,
@@ -94,7 +94,7 @@ def create(request):
 
 	new_listing = listing_form.save()
 
-	listing_dict = model_to_dict(new_listing)
+	listing_dict = __listing_to_dict(new_listing)
 
 	response = {
 		"ok": True,
@@ -102,6 +102,18 @@ def create(request):
 	}
 
 	return JsonResponse(response)
+
+def __listing_to_dict(listing):
+	listing_dict = model_to_dict(listing)
+
+	# Get all images for the listing and remove redundant listing id info on each image
+	image_dict_list = [model_to_dict(image) for image in listing.images.all()]
+	for image_dict in image_dict_list:
+		image_dict.pop('listing', None)
+	listing_dict['images'] = image_dict_list
+
+	return listing_dict
+
 
 #def most_recent(request, count):
 #	listings = Listings.objects.order_by()
