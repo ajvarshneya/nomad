@@ -1,7 +1,15 @@
 from django.db import models
 from django.forms import ModelForm
 
-class User(models.Model):
+class CommonInfo(models.Model):
+    # Created/updated time
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+    	abstract = True
+
+class User(CommonInfo):
 	# Contact info
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -19,7 +27,7 @@ class User(models.Model):
     street = models.CharField(max_length=100)
     city = models.CharField(max_length=50)
     country = models.CharField(max_length=50)
-    zipcode = models.CharField(max_length=9)
+    zipcode = models.CharField(max_length=9) 
 
     def __str__(self):
     	return "{} {} ({})".format(self.first_name, self.last_name, self.email)
@@ -29,7 +37,7 @@ class UserForm(ModelForm):
 		model = User
 		fields = '__all__'
 
-class Listing(models.Model):
+class Listing(CommonInfo):
 	# Every Listing has one User, but a User can have many Listings
 	user = models.ForeignKey(User)
 
@@ -49,6 +57,9 @@ class Listing(models.Model):
 	# This allows users to specify 2.5 baths, etc.
 	baths = models.DecimalField(max_digits=4, decimal_places=1)
 
+	# Price
+	price = models.IntegerField(default=100)
+
 	def __str__(self):
 		return self.title
 
@@ -57,7 +68,7 @@ class ListingForm(ModelForm):
 		model = Listing
 		fields = '__all__'
 
-class Reservation(models.Model):
+class Reservation(CommonInfo):
 	start_date = models.DateTimeField()
 	end_date = models.DateTimeField()
 	is_available = models.BooleanField()
@@ -78,7 +89,7 @@ class ReservationForm(ModelForm):
 		# exclude = ['user','listing']
 		fields = '__all__'
 
-class Review(models.Model):
+class Review(CommonInfo):
 	title = models.CharField(max_length=50)
 	comment = models.TextField(max_length=1000)
 
@@ -100,7 +111,7 @@ class ReviewForm(ModelForm):
 		model = Review
 		fields = '__all__'
 
-class Tag(models.Model):
+class Tag(CommonInfo):
 	text = models.CharField(max_length=20)
 
 	# A Tag can have many Listings, and a Listing can have many Tags
@@ -113,3 +124,24 @@ class TagForm(ModelForm):
 	class Meta:
 		model = Tag
 		fields = '__all__'
+
+class Image(CommonInfo):
+	# Url for full size image
+	url_full = models.URLField()
+
+	class Meta:
+		abstract = True
+
+class ProfileImage(Image):
+	# Use related_name so the image can be accessed via user.profile_image
+	user = models.OneToOneField(User, related_name='profile_image')
+
+	def __str__(self):
+		return "{} {}".format(self.user.username, self.id)
+
+class ListingImage(Image):
+	# Use related_name so the images can be accessed via listing.images
+	listing = models.ForeignKey(Listing, related_name='images')
+
+	def __str__(self):
+		return "{} {}".format(self.listing.title, self.id)

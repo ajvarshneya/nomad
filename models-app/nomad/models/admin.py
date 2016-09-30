@@ -11,3 +11,7 @@ admin.site.register(Reservation)
 admin.site.register(Review)
 
 admin.site.register(Tag)
+
+admin.site.register(ProfileImage)
+
+admin.site.register(ListingImage)
