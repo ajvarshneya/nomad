@@ -2,4 +2,4 @@
 .DS_Store
 db
 
-app/nomad/api/migrations
+models-app/nomad/models/migrations
