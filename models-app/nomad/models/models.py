@@ -125,7 +125,9 @@ class TagForm(ModelForm):
 		model = Tag
 		fields = '__all__'
 
-class Image(CommonInfo):
+
+# Note: Check out imagekit for image handling
+class Image(models.Model):
 	# Url for full size image
 	url_full = models.URLField()
 
@@ -134,14 +136,14 @@ class Image(CommonInfo):
 
 class ProfileImage(Image):
 	# Use related_name so the image can be accessed via user.profile_image
-	user = models.OneToOneField(User, related_name='profile_image')
+	user = models.OneToOneField(User, related_name='profile_image', blank=True, null=True)
 
 	def __str__(self):
 		return "{} {}".format(self.user.username, self.id)
 
 class ListingImage(Image):
 	# Use related_name so the images can be accessed via listing.images
-	listing = models.ForeignKey(Listing, related_name='images')
+	listing = models.ForeignKey(Listing, related_name='images', blank=True, null=True)
 
 	def __str__(self):
 		return "{} {}".format(self.listing.title, self.id)

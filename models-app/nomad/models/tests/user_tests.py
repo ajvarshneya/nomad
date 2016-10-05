@@ -10,30 +10,39 @@ def get_response_result(json_response):
 class UserApiTests(TestCase):
 	fixtures = ['db']
 
+	# Helper method to compare fields in a json result and a user model
+	def compare_fields(self, json_result, user):
+		for key in json_result:
+			# Handle profile images explicitly
+			if key == "profile_image":
+				self.assertEqual(json_result[key]["url_full"], user.profile_image.url_full)
+			else:
+				self.assertEqual(json_result[key], getattr(user, key))
+
 	def test_user_index(self):
 		response = self.client.get('/models/api/v1/users/')
+		users = User.objects.all()
 
 		self.assertEqual(response.status_code, 200)
 
 		# Get json data from response
 		json_result = get_response_result(response)
 
-		# Check that 4 models were returned
-		self.assertEqual(len(json_result), 4)
+		# Check that all models were returned
+		self.assertEqual(len(json_result), len(users))
 
 	def test_user_detail_get_valid(self):
 		user_id = 1
 		user = User.objects.get(pk=user_id)
-		user_dict = model_to_dict(user)
 
 		response = self.client.get('/models/api/v1/users/' + str(user_id) + '/')
 
 		self.assertEqual(response.status_code, 200)
 
 		json_result = get_response_result(response)
-		# Compare all result fields to those in the model
-		for key in json_result:
-			self.assertEqual(json_result[key], str(user_dict[key]))
+
+		# # Compare all result fields to those in the model
+		self.compare_fields(json_result, user)
 
 	def test_user_detail_post_valid(self):
 		user_id = 1
@@ -48,13 +57,11 @@ class UserApiTests(TestCase):
 
 		# Get updated model
 		user = User.objects.get(pk=user_id)
-		user_dict = model_to_dict(user)
 
 		json_result = get_response_result(response)
 
 		# Compare all result fields to those in the model 
-		for key in json_result:
-			self.assertEqual(json_result[key], user_dict[key])
+		self.compare_fields(json_result, user)
 
 	def test_user_detail_delete_valid(self):
 		user_id = 1
@@ -77,7 +84,7 @@ class UserApiTests(TestCase):
 			'street': "123 example lane",
 			'city': "somewhere",
 			'country': "US",
-			'zipcode': "12345",
+			'zipcode': "12345"
 		}
 		response = self.client.post('/models/api/v1/users/create/', data)
 
@@ -88,11 +95,10 @@ class UserApiTests(TestCase):
 		# Get the new user model
 		user_id = json_result['id']
 		user = User.objects.get(pk=user_id)
-		user_dict = model_to_dict(user)
 
 		# Compare all result fields to those in the model
-		for key in json_result:
-			self.assertEqual(json_result[key], user_dict[key])
+		self.compare_fields(json_result, user)
 
+		# Compare all data fields to those in the model
 		for key in data:
-			self.assertEqual(data[key], user_dict[key])
+			self.assertEqual(data[key], getattr(user, key))

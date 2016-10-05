@@ -55,7 +55,16 @@ def __detail_get(request, user_id):
 	return JsonResponse(response)
 
 def __detail_post(request, user_id):
-	user_form = UserForm(request.POST)
+	try:
+		user = User.objects.get(pk=user_id)
+	except User.DoesNotExist:
+		return JsonResponse({
+			"ok": False,
+			"error": "User does not exist"
+			})
+
+	# Include the current user instance in the UserForm
+	user_form = UserForm(request.POST, instance=user)
 
 	if not user_form.is_valid():
 		return JsonResponse({
@@ -122,7 +131,8 @@ def __user_to_dict(user):
 	user_dict = model_to_dict(user)
 
 	# Get profile image for the user and remove redundant user id info on the image
-	user_dict['profile_image'] = model_to_dict(user.profile_image)
-	user_dict['profile_image'].pop('user', None)
+	if hasattr(user, 'profile_image'):
+		user_dict['profile_image'] = model_to_dict(user.profile_image)
+		user_dict['profile_image'].pop('user', None)
 
 	return user_dict
