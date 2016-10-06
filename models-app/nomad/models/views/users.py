@@ -64,6 +64,7 @@ def __detail_post(request, user_id):
 			})
 
 	# Include the current user instance in the UserForm
+	# Note: Do this to prevent erros with created_at and updated_at
 	user_form = UserForm(request.POST, instance=user)
 
 	if not user_form.is_valid():

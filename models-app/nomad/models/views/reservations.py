@@ -46,7 +46,16 @@ def __detail_get(request, reservation_id):
 	return JsonResponse(response)
 
 def __detail_post(request, reservation_id):
-	res_form = ReservationForm(request.POST)
+	try:
+		reservation = Reservation.objects.get(pk=reservation_id)
+	except Reservation.DoesNotExist:
+		return JsonResponse({
+				"ok": False,
+				"error": "Reservation does not exist"
+			})
+
+	# Include the current reservation instance in the form
+	res_form = ReservationForm(request.POST, instance=reservation)
 	if not res_form.is_valid():
 		return JsonResponse({
 			"ok": False,
@@ -54,7 +63,7 @@ def __detail_post(request, reservation_id):
 			})
 	new_res = res_form.save(commit = False)
 
-	new_res.id = reservation_id
+	new_res.id = int(reservation_id)
 	new_res.save()
 	res_dict = model_to_dict(new_res)
 	response = {
