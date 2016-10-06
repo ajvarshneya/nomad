@@ -48,14 +48,22 @@ def __detail_get(request, listing_id):
 	return JsonResponse(response)
 
 def __detail_post(request, listing_id):
-	listing_form = ListingForm(request.POST)
+	try:
+		listing = Listing.objects.get(pk=listing_id)
+	except Listing.DoesNotExist:
+		return JsonResponse({
+				"ok": False,
+				"error": "Listing does not exist",
+			})
+
+	listing_form = ListingForm(request.POST, instance=listing)
 
 	if not listing_form.is_valid():
 		return JsonResponse({"ok": False})
 
 	new_listing = listing_form.save(commit=False)
 
-	new_listing.id = listing_id
+	new_listing.id = int(listing_id)
 	new_listing.save()
 
 	listing_dict = __listing_to_dict(new_listing)

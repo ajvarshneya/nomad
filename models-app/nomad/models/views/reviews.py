@@ -51,7 +51,17 @@ def __detail_get(request, review_id):
 	return JsonResponse(response)
 
 def __detail_post(request, review_id):
-	review_form = ReviewForm(request.POST)
+	try:
+		review = Review.objects.get(pk=review_id)
+	except Review.DoesNotExist:
+		return JsonResponse({
+				"ok": False,
+				"error": "Review does not exist",
+			})
+
+	# Include the current review in the form
+	review_form = ReviewForm(request.POST, instance=review)
+
 	if not review_form.is_valid():
 		return JsonResponse({
 				"ok": False,
@@ -59,7 +69,7 @@ def __detail_post(request, review_id):
 			})
 
 	new_review = review_form.save(commit=False)
-	new_review.id = review_id
+	new_review.id = int(review_id)
 	new_review.save()
 
 	review_dict = model_to_dict(new_review)

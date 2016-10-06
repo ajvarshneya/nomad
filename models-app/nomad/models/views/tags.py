@@ -39,7 +39,15 @@ def __detail_get(request, tag_id):
 	return JsonResponse(response)
 
 def __detail_post(request, tag_id):
-	tag_form = TagForm(request.POST)
+	try:
+		tag = Tag.objects.get(pk=tag_id)
+	except Tag.DoesNotExist:
+		return JsonResponse({
+				"ok": False,
+				"error": "Tag does not exist",
+			})
+
+	tag_form = TagForm(request.POST, instance=tag)
 	if not tag_form.is_valid():
 		return JsonResponse({
 				"ok": False,
@@ -47,7 +55,7 @@ def __detail_post(request, tag_id):
 			})
 
 	new_tag = tag_form.save(commit=False)
-	new_tag.id = tag_id
+	new_tag.id = int(tag_id)
 	new_tag.save()
 
 	tag_dict = model_to_dict(new_tag)
