@@ -59,8 +59,8 @@ def __detail_post(request, user_id):
 		user = User.objects.get(pk=user_id)
 	except User.DoesNotExist:
 		return JsonResponse({
-			"ok": False,
-			"error": "User does not exist"
+				"ok": False,
+				"error": "User does not exist"
 			})
 
 	# Include the current user instance in the UserForm
@@ -68,8 +68,8 @@ def __detail_post(request, user_id):
 
 	if not user_form.is_valid():
 		return JsonResponse({
-			"ok": False,
-			"error": user_form.errors
+				"ok": False,
+				"error": user_form.errors
 			})
 
 	# Do not commit the changes yet
@@ -93,8 +93,9 @@ def __detail_delete(request, user_id):
 		user = User.objects.get(pk=user_id)
 	except User.DoesNotExist:
 		return JsonResponse({
-			"ok": False,
-			"error": "User does not exist"})
+				"ok": False,
+				"error": "User does not exist"
+			})
 
 	user.delete()
 

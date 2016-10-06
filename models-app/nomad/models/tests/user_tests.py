@@ -3,8 +3,8 @@ from django.forms.models import model_to_dict
 from models.models import *
 import json
 
-def get_response_result(json_response):
-	return json.loads(json_response.content.decode('utf-8'))['result']
+def get_json_response(json_response):
+	return json.loads(json_response.content.decode('utf-8'))
 
 # Create your tests here.
 class UserApiTests(TestCase):
@@ -26,7 +26,7 @@ class UserApiTests(TestCase):
 		self.assertEqual(response.status_code, 200)
 
 		# Get json data from response
-		json_result = get_response_result(response)
+		json_result = get_json_response(response)['result']
 
 		# Check that all models were returned
 		self.assertEqual(len(json_result), len(users))
@@ -39,10 +39,23 @@ class UserApiTests(TestCase):
 
 		self.assertEqual(response.status_code, 200)
 
-		json_result = get_response_result(response)
+		json_result = get_json_response(response)['result']
 
 		# # Compare all result fields to those in the model
 		self.compare_fields(json_result, user)
+
+	def test_user_detail_get_invalid(self):
+		user_id = 0
+
+		response = self.client.get('/models/api/v1/users/' + str(user_id) + '/')
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and DNE error message
+		self.assertEqual(json_response["ok"], False)
+		self.assertIn("does not exist", json_response["error"])
 
 	def test_user_detail_post_valid(self):
 		user_id = 1
@@ -58,10 +71,30 @@ class UserApiTests(TestCase):
 		# Get updated model
 		user = User.objects.get(pk=user_id)
 
-		json_result = get_response_result(response)
+		json_result = get_json_response(response)['result']
 
 		# Compare all result fields to those in the model 
 		self.compare_fields(json_result, user)
+
+	def test_user_detail_post_invalid(self):
+		user_id = 0
+
+		# Get data for a user in the database
+		user = User.objects.all()[0]
+		data = model_to_dict(user)
+		data.pop('id', None)
+		data['first_name'] = "new first name"
+		data['last_name'] = "new last name"
+
+		response = self.client.post('/models/api/v1/users/' + str(user_id) + '/')
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and DNE error message
+		self.assertEqual(json_response["ok"], False)
+		self.assertIn("does not exist", json_response["error"])
 
 	def test_user_detail_delete_valid(self):
 		user_id = 1
@@ -69,8 +102,20 @@ class UserApiTests(TestCase):
 
 		self.assertEqual(response.status_code, 200)
 
-		json_result = get_response_result(response)
+		json_result = get_json_response(response)['result']
 		self.assertEqual(json_result['id'], str(user_id))
+
+	def test_user_detail_delete_invalid(self):
+		user_id = 0
+		response = self.client.delete('/models/api/v1/users/' + str(user_id) + '/')
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and DNE error message
+		self.assertEqual(json_response["ok"], False)
+		self.assertIn("does not exist", json_response["error"])
 
 	def test_user_create(self):
 		data = {
@@ -90,7 +135,7 @@ class UserApiTests(TestCase):
 
 		self.assertEqual(response.status_code, 200)
 
-		json_result = get_response_result(response)
+		json_result = get_json_response(response)['result']
 
 		# Get the new user model
 		user_id = json_result['id']
