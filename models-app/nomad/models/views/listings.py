@@ -36,7 +36,10 @@ def __detail_get(request, listing_id):
 	try:
 		listing = Listing.objects.get(pk=listing_id)
 	except Listing.DoesNotExist:
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+				"ok": False,
+				"error": "Listing does not exist",
+			})
 
 	listing_dict = __listing_to_dict(listing)
 
@@ -59,7 +62,10 @@ def __detail_post(request, listing_id):
 	listing_form = ListingForm(request.POST, instance=listing)
 
 	if not listing_form.is_valid():
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+				"ok": False,
+				"error": listing_form.errors
+			})
 
 	new_listing = listing_form.save(commit=False)
 
@@ -79,7 +85,10 @@ def __detail_delete(request, listing_id):
 	try:
 		listing = Listing.objects.get(pk=listing_id)
 	except Listing.DoesNotExist:
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+				"ok": False,
+				"error": "Listing does not exist"
+			})
 
 	listing.delete()
 
@@ -98,7 +107,10 @@ def create(request):
 	# return JsonResponse(request.POST)
 
 	if not listing_form.is_valid():
-		return JsonResponse({"ok": False})
+		return JsonResponse({
+				"ok": False,
+				"error": listing_form.errors
+			})
 
 	new_listing = listing_form.save()
 
