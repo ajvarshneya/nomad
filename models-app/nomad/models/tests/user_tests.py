@@ -76,7 +76,7 @@ class UserApiTests(TestCase):
 		# Compare all result fields to those in the model 
 		self.compare_fields(json_result, user)
 
-	def test_user_detail_post_invalid(self):
+	def test_user_detail_post_invalid_id(self):
 		user_id = 0
 
 		# Get data for a user in the database
@@ -95,6 +95,26 @@ class UserApiTests(TestCase):
 		# Check for ok: False and DNE error message
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
+
+	def test_user_detail_post_invalid_data(self):
+		# Assumes all fields should be passed in a post method
+		user_id = 1
+		user = User.objects.get(pk=user_id)
+		data = model_to_dict(user)
+		data.pop('first_name', None)
+		data.pop('last_name', None)
+
+		response = self.client.post('/models/api/v1/users/' + str(user_id) + '/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and form error message
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])
 
 	def test_user_detail_delete_valid(self):
 		user_id = 1
@@ -117,7 +137,7 @@ class UserApiTests(TestCase):
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
 
-	def test_user_create(self):
+	def test_user_create_valid(self):
 		data = {
 			'first_name': "first",
 			'last_name': "last",
@@ -147,3 +167,29 @@ class UserApiTests(TestCase):
 		# Compare all data fields to those in the model
 		for key in data:
 			self.assertEqual(data[key], getattr(user, key))
+
+	def test_user_create_invalid(self):
+		data = {
+			# 'first_name': "first",
+			# 'last_name': "last",
+			'email': "a@example.com",
+			'phone_number': "1234567890",
+			'password': "password",
+			'username': "sample_user",
+			'creditcard': "4111111111111111",
+			'street': "123 example lane",
+			'city': "somewhere",
+			'country': "US",
+			'zipcode': "12345"
+		}
+		response = self.client.post('/models/api/v1/users/create/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and form error message
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])

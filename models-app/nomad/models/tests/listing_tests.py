@@ -43,7 +43,7 @@ class ListingApiTests(TestCase):
 
 		json_result = get_json_response(response)['result']
 
-		# # Compare all result fields to those in the model
+		# Compare all result fields to those in the model
 		self.compare_fields(json_result, listing)
 
 	def test_listing_detail_get_invalid(self):
@@ -77,7 +77,7 @@ class ListingApiTests(TestCase):
 		# Compare all result fields to those in the model 
 		self.compare_fields(json_result, listing)
 
-	def test_listing_detail_post_invalid(self):
+	def test_listing_detail_post_invalid_id(self):
 		listing_id = 0
 
 		# Get data for a listing in the database
@@ -95,6 +95,24 @@ class ListingApiTests(TestCase):
 		# Check for ok: False and DNE error message
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
+
+	def test_listing_detail_post_invalid_data(self):
+		listing_id = 1
+		listing = Listing.objects.get(pk=listing_id)
+		data = model_to_dict(listing)
+		data.pop('title', None)
+
+		response = self.client.post('/models/api/v1/listings/' + str(listing_id) + '/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and form error message
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])
 
 	def test_listing_detail_delete_valid(self):
 		listing_id = 1
@@ -117,7 +135,7 @@ class ListingApiTests(TestCase):
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
 
-	def test_listing_create(self):
+	def test_listing_create_valid(self):
 		data = {
 			"title": "Relaxing Beach House",
 			"country": "US",
@@ -142,3 +160,28 @@ class ListingApiTests(TestCase):
 
 		# Compare all result fields to those in the model
 		self.compare_fields(json_result, listing)
+
+	def test_listing_create_invalid(self):
+		data = {
+			# "title": "Relaxing Beach House",
+			"country": "US",
+			"zipcode": "67890",
+			"beds": "4",
+			# "city": "beach city",
+			"baths": "4.5",
+			"street": "beach street",
+			"user": "1",
+			# "price": "250",
+		}
+
+		response = self.client.post('/models/api/v1/listings/create/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and form error message
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])

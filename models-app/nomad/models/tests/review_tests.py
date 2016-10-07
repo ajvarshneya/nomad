@@ -75,7 +75,7 @@ class ReviewApiTests(TestCase):
 		# Compare all result fields to those in the model 
 		self.compare_fields(json_result, review)
 
-	def test_review_detail_post_invalid(self):
+	def test_review_detail_post_invalid_id(self):
 		review_id = 0
 
 		# Get data for a review in the database
@@ -89,6 +89,26 @@ class ReviewApiTests(TestCase):
 		self.assertEqual(response.status_code, 200)
 
 		json_response = get_json_response(response)
+
+		self.assertEqual(json_response["ok"], False)
+		self.assertIn("does not exist", json_response["error"])
+
+	def test_review_detail_post_invalid_data(self):
+		review_id = 1
+		review = Review.objects.get(pk=review_id)
+		data = model_to_dict(review)
+		data.pop('title', None)
+
+		response = self.client.post('/models/api/v1/reviews/' + str(review_id) + '/')
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])
 
 	def test_review_detail_delete_valid(self):
 		review_id = 1
@@ -111,7 +131,7 @@ class ReviewApiTests(TestCase):
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
 
-	def test_review_create(self):
+	def test_review_create_valid(self):
 		data = {
 			"comment": "new comment text here",
 			"title": "Relaxing Beach House",
@@ -132,3 +152,21 @@ class ReviewApiTests(TestCase):
 		# Compare all result fields to those in the model
 		self.compare_fields(json_result, review)
 
+	def test_review_create_invalid(self):
+		data = {
+			"comment": "new comment text here",
+			# "title": "Relaxing Beach House",
+			"user": 3,
+			# "rating": 4,
+			"listing": 1,
+		}
+		response = self.client.post('/models/api/v1/reviews/create/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])

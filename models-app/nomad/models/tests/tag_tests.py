@@ -76,7 +76,7 @@ class TagApiTests(TestCase):
 		# Compare all result fields to those in the model 
 		self.compare_fields(json_result, tag)
 
-	def test_tag_detail_post_invalid(self):
+	def test_tag_detail_post_invalid_id(self):
 		tag_id = 0
 
 		# Get data for a tag in the database
@@ -90,6 +90,24 @@ class TagApiTests(TestCase):
 		self.assertEqual(response.status_code, 200)
 
 		json_response = get_json_response(response)
+
+	def test_tag_detail_post_invalid_data(self):
+		tag_id = 1
+		tag = Tag.objects.get(pk=tag_id)
+		data = model_to_dict(tag)
+		data.pop('text', None)
+
+		response = self.client.post('/models/api/v1/tags/' + str(tag_id) + '/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and form error message
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])
 
 	def test_tag_detail_delete_valid(self):
 		tag_id = 1
@@ -112,7 +130,7 @@ class TagApiTests(TestCase):
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
 
-	def test_tag_create(self):
+	def test_tag_create_valid(self):
 		data = {
 			"text": "suburban",
 			"listings": 1,
@@ -129,3 +147,20 @@ class TagApiTests(TestCase):
 
 		# Compare all result fields to those in the model
 		self.compare_fields(json_result, tag)
+
+	def test_tag_create_invalid(self):
+		data = {
+			# "text": "suburban",
+			"listings": 1,
+		}
+		response = self.client.post('/models/api/v1/tags/create/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		# Check for ok: False and form error message
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])

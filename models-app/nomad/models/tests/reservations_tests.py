@@ -79,7 +79,7 @@ class ReservationsApitTests(TestCase):
 
 		self.compare_fields(json_result, reservation)
 
-	def test_reservation_detail_post_invalid(self):
+	def test_reservation_detail_post_invalid_id(self):
 		reservation_id = 0
 
 		# Get data for a reservation
@@ -98,6 +98,24 @@ class ReservationsApitTests(TestCase):
 		# Check for ok: False and DNE error message
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
+
+	def test_reservation_detail_post_invalid_data(self):
+		reservation_id = 1
+		reservation = Reservation.objects.get(pk=reservation_id)
+		data = model_to_dict(reservation)
+		data.pop('start_date', None)
+		data.pop('end_date', None)
+
+		response = self.client.post('/models/api/v1/reservations/' + str(reservation_id) + '/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])
 
 	def test_reservation_detail_delete_valid(self):
 		reservation_id = 1
@@ -120,7 +138,7 @@ class ReservationsApitTests(TestCase):
 		self.assertEqual(json_response["ok"], False)
 		self.assertIn("does not exist", json_response["error"])
 
-	def test_reservation_create(self):
+	def test_reservation_create_valid(self):
 		data = {
 			"is_available": "false",
 			"start_date": "2016-09-19 12:00",
@@ -140,3 +158,22 @@ class ReservationsApitTests(TestCase):
 
 		# Compare all result fields to those in the model
 		self.compare_fields(json_result, reservation)
+
+	def test_reservation_create_invalid(self):
+		data = {
+			"is_available": "false",
+			# "start_date": "2016-09-19 12:00",
+			# "end_date": "2016-09-26 12:00",
+			"listing": 4,
+			"user": 1,
+		}
+		response = self.client.post('/models/api/v1/reservations/create/', data)
+
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+
+		self.assertEqual(json_response["ok"], False)
+		errors = json_response["error"]
+		for field in errors:
+			self.assertIn("This field is required.", errors[field])
