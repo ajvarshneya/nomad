@@ -75,3 +75,29 @@ Questions:
 - Should stories just be for features we are building in this project?
 - Do we unit test the web API layer or the experience API layer
 
+
+
+
+
+Start USER STORIES AND CORRESPONDING UNIT TEST
+WEB LAYER
+-As a User I would like to be able to see the home page when I request the site ------>  HomeViewTests
+    -Acceptance: 
+        -The home page is shown when requested
+
+-As a User I would like to be able view available Listings ------>  ListingViewTests
+    -Acceptance
+        - If there are no listings to show then display No listings found
+        - If there there is an invalid user id display 404 page with invalid listing id
+        - If there are listings to be shown the show the listings
+
+EXP LAYER
+- As a User I would like to be able to request a list of users in the form of JSON
+        - Acceptance
+            - A list of users is returned in the form JSON
+- As a User I would like to be able to request a list of reservations that I have in the form of JSON
+    -Acceptance
+        - A list of reservations is returned for a particular user
+
+
+
