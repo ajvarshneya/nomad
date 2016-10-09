@@ -21,7 +21,15 @@ def index(request):
 		raise Http404(response)
 
 
-	# TODO: Get most popular listings
+	# Get most popular listings
+	most_popular_listings = urllib.request.Request('http://exp-api:8000/exp/api/v1/listings/most_popular/?limit=3')
+	json_response = urllib.request.urlopen(most_popular_listings).read().decode('utf-8')
+	response = json.loads(json_response)
+
+	if "ok" in response and response["ok"]:
+		context['most_popular_listings'] = response["result"]
+	else:
+		raise Http404(response)
 
 	return HttpResponse(template.render(context, request))
 

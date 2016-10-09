@@ -92,5 +92,62 @@ def most_recent(request):
 
 
 # Returns a JSON object for the k most popular listings
-def most_popular(request, k):
-    pass
+def most_popular(request):
+    response = {}
+
+    # Note: For scalability, it could be worth looking into keeping an average rating
+    #   field in the listing class, that way most_popular could be accomplished with
+    #   only 1 url request instead of len(listing) requests.
+    #
+    #   The rating field would have to be updated whenever a new review is added.
+
+    # Get all listings
+    listing_request = urllib.request.Request('http://models-api:8000/models/api/v1/listings/')
+    json_listing_response = urllib.request.urlopen(listing_request).read().decode('utf-8')
+    listing_response = json.loads(json_listing_response)
+
+    if not listing_response["ok"]:
+        response["result"] = None
+        response["ok"] = False
+        return JsonResponse(response)
+
+    # For each listing, get all of its reviews and average their ratings
+    # Add the result to a list of tuples containing (rating, listing)
+    rating_listing_list = []
+    for listing in listing_response["result"]:
+        listing_id = listing["id"]
+
+        reviews_request = urllib.request.Request('http://models-api:8000/models/api/v1/reviews/?listing=' + str(listing_id))
+        json_reviews_response = urllib.request.urlopen(reviews_request).read().decode('utf-8')
+        reviews_response = json.loads(json_reviews_response)
+
+        # If the response was not ok or there were no ratings, assume rating of 0
+        if not reviews_response["ok"] or len(reviews_response["result"]) == 0:
+            rating_listing_list.append((0, listing))
+        else:
+            # Calculate the average rating for a listing by averaging all of its review ratings
+            rating_sum = 0.0
+            for review in reviews_response["result"]:
+                rating_sum += review["rating"]
+            num_reviews = len(reviews_response["result"])
+            avg_rating = rating_sum / num_reviews
+
+            rating_listing_list.append((avg_rating, listing))
+
+    # Sort the list by rating
+    rating_listing_list.sort(key=lambda tup: tup[0], reverse=True)
+
+    # Get the limit from the url (or return all if no limit)
+    limit = request.GET.get('limit', None)
+    if limit:
+        rating_listing_list = rating_listing_list[:int(limit)]
+
+    # Add the rating to each listing and add the listing to the result
+    result = []
+    for tup in rating_listing_list:
+        tup[1]["rating"] = tup[0]
+        result.append(tup[1])
+
+    response["ok"] = True
+    response["result"] = result
+    return JsonResponse(response)

@@ -26,20 +26,18 @@
             </div>
             {% endfor %}
     	</div>
-        <!--
-    	<h3>Whatttt????</h3>
+        
+    	<h3>Most Popular</h3>
     	<div class="row">
-    		<div class="col-md-4">
-    			<div class="custom-box" id="item4">Dank</div>
-    		</div>
-    		<div class="col-md-4">
-    			<div class="custom-box" id="item5">Memes</div>
-    		</div>
-    		<div class="col-md-4">
-    			<div class="custom-box" id="item6">Testing</div>
-    		</div>
+            {% for listing in most_popular_listings %}
+            <div class="col-md-4">
+                <div class="custom-box" style="background-image: linear-gradient( rgba(0,0,0,.5), rgba(0,0,0,.5) ), url({{ listing.images.0.url_full }})">
+                    {{ listing.title }}
+                </div>
+            </div>
+            {% endfor %}
     	</div>
-        -->
+        
 	</div>
     
 {% endblock %}
