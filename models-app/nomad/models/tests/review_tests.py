@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 from models.models import *
 import json
 
@@ -20,7 +21,8 @@ class ReviewApiTests(TestCase):
 				self.assertEqual(json_result[key], getattr(review, key))
 
 	def test_review_index(self):
-		response = self.client.get('/models/api/v1/reviews/')
+		url = reverse('models:reviews-index')
+		response = self.client.get(url)
 		reviews = Review.objects.all()
 
 		self.assertEqual(response.status_code, 200)
@@ -35,7 +37,8 @@ class ReviewApiTests(TestCase):
 		review_id = 1
 		review = Review.objects.get(pk=review_id)
 
-		response = self.client.get('/models/api/v1/reviews/' + str(review_id) + '/')
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -47,7 +50,8 @@ class ReviewApiTests(TestCase):
 	def test_review_detail_get_invalid(self):
 		review_id = 0
 
-		response = self.client.get('/models/api/v1/reviews/' + str(review_id) + '/')
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -63,7 +67,8 @@ class ReviewApiTests(TestCase):
 		data = model_to_dict(review)
 		data['title'] = "New title here"
 
-		response = self.client.post('/models/api/v1/reviews/' + str(review_id) + '/', data)
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -84,7 +89,8 @@ class ReviewApiTests(TestCase):
 		data.pop('id', None)
 		data['title'] = "New title here"
 
-		response = self.client.post('/models/api/v1/reviews/' + str(review_id) + '/')
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.post(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -99,7 +105,8 @@ class ReviewApiTests(TestCase):
 		data = model_to_dict(review)
 		data.pop('title', None)
 
-		response = self.client.post('/models/api/v1/reviews/' + str(review_id) + '/')
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.post(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -112,7 +119,8 @@ class ReviewApiTests(TestCase):
 
 	def test_review_detail_delete_valid(self):
 		review_id = 1
-		response = self.client.delete('/models/api/v1/reviews/' + str(review_id) + '/')
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -121,7 +129,8 @@ class ReviewApiTests(TestCase):
 
 	def test_review_detail_delete_invalid(self):
 		review_id = 0
-		response = self.client.delete('/models/api/v1/reviews/' + str(review_id) + '/')
+		url = reverse('models:reviews-detail', kwargs={'review_id': review_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -139,7 +148,8 @@ class ReviewApiTests(TestCase):
 			"rating": 4,
 			"listing": 1,
 		}
-		response = self.client.post('/models/api/v1/reviews/create/', data)
+		url = reverse('models:reviews-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -160,7 +170,8 @@ class ReviewApiTests(TestCase):
 			# "rating": 4,
 			"listing": 1,
 		}
-		response = self.client.post('/models/api/v1/reviews/create/', data)
+		url = reverse('models:reviews-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -170,3 +181,4 @@ class ReviewApiTests(TestCase):
 		errors = json_response["error"]
 		for field in errors:
 			self.assertIn("This field is required.", errors[field])
+		

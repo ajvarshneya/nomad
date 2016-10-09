@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 from models.models import *
 import json
 
@@ -26,7 +27,8 @@ class ReservationsApitTests(TestCase):
 				self.assertEqual(json_result[key], getattr(reservation, key))
 
 	def test_reservation_index(self):
-		response = self.client.get('/models/api/v1/users/')
+		url = reverse('models:reservations-index')
+		response = self.client.get(url)
 		reservations = Reservation.objects.all()
 
 		self.assertEqual(response.status_code, 200)
@@ -39,7 +41,8 @@ class ReservationsApitTests(TestCase):
 		reservation_id = 1
 		reservation = Reservation.objects.get(pk=reservation_id)
 
-		response = self.client.get('/models/api/v1/reservations/' + str(reservation_id) + '/')
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -51,7 +54,8 @@ class ReservationsApitTests(TestCase):
 	def test_reservation_detail_get_invalid(self):
 		reservation_id = 0
 
-		response = self.client.get('/models/api/v1/reservations/' + str(reservation_id) + '/')
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -68,7 +72,8 @@ class ReservationsApitTests(TestCase):
 		data['start_date'] = "2016-09-19 12:00"
 		data['end_date'] = "2016-09-26 12:00"
 
-		response = self.client.post('/models/api/v1/reservations/' + str(reservation_id) + '/', data)
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -89,7 +94,8 @@ class ReservationsApitTests(TestCase):
 		data['start_date'] = "2016-09-19 12:00"
 		data['end_date'] = "2016-09-26 12:00"
 
-		response = self.client.post('/models/api/v1/reservations/' + str(reservation_id) + '/', data)
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -106,7 +112,8 @@ class ReservationsApitTests(TestCase):
 		data.pop('start_date', None)
 		data.pop('end_date', None)
 
-		response = self.client.post('/models/api/v1/reservations/' + str(reservation_id) + '/', data)
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -119,7 +126,8 @@ class ReservationsApitTests(TestCase):
 
 	def test_reservation_detail_delete_valid(self):
 		reservation_id = 1
-		response = self.client.delete('/models/api/v1/reservations/' + str(reservation_id) + '/')
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -128,7 +136,8 @@ class ReservationsApitTests(TestCase):
 
 	def test_reservation_detail_delete_invalid(self):
 		reservation_id = 0
-		response = self.client.delete('/models/api/v1/reservations/' + str(reservation_id) + '/')
+		url = reverse('models:reservations-detail', kwargs={'reservation_id': reservation_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -146,7 +155,8 @@ class ReservationsApitTests(TestCase):
 			"listing": 4,
 			"user": 1,
 		}
-		response = self.client.post('/models/api/v1/reservations/create/', data)
+		url = reverse('models:reservations-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -167,7 +177,8 @@ class ReservationsApitTests(TestCase):
 			"listing": 4,
 			"user": 1,
 		}
-		response = self.client.post('/models/api/v1/reservations/create/', data)
+		url = reverse('models:reservations-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 

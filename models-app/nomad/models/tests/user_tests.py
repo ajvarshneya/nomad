@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 from models.models import *
 import json
 
@@ -20,7 +21,8 @@ class UserApiTests(TestCase):
 				self.assertEqual(json_result[key], getattr(user, key))
 
 	def test_user_index(self):
-		response = self.client.get('/models/api/v1/users/')
+		url = reverse('models:users-index')
+		response = self.client.get(url)
 		users = User.objects.all()
 
 		self.assertEqual(response.status_code, 200)
@@ -35,7 +37,8 @@ class UserApiTests(TestCase):
 		user_id = 1
 		user = User.objects.get(pk=user_id)
 
-		response = self.client.get('/models/api/v1/users/' + str(user_id) + '/')
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -47,7 +50,8 @@ class UserApiTests(TestCase):
 	def test_user_detail_get_invalid(self):
 		user_id = 0
 
-		response = self.client.get('/models/api/v1/users/' + str(user_id) + '/')
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -64,7 +68,8 @@ class UserApiTests(TestCase):
 		data['first_name'] = "new first name"
 		data['last_name'] = "new last name"
 
-		response = self.client.post('/models/api/v1/users/' + str(user_id) + '/', data)
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -86,7 +91,8 @@ class UserApiTests(TestCase):
 		data['first_name'] = "new first name"
 		data['last_name'] = "new last name"
 
-		response = self.client.post('/models/api/v1/users/' + str(user_id) + '/')
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.post(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -104,7 +110,8 @@ class UserApiTests(TestCase):
 		data.pop('first_name', None)
 		data.pop('last_name', None)
 
-		response = self.client.post('/models/api/v1/users/' + str(user_id) + '/', data)
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -118,7 +125,8 @@ class UserApiTests(TestCase):
 
 	def test_user_detail_delete_valid(self):
 		user_id = 1
-		response = self.client.delete('/models/api/v1/users/' + str(user_id) + '/')
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -127,7 +135,8 @@ class UserApiTests(TestCase):
 
 	def test_user_detail_delete_invalid(self):
 		user_id = 0
-		response = self.client.delete('/models/api/v1/users/' + str(user_id) + '/')
+		url = reverse('models:users-detail', kwargs={'user_id': user_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -151,7 +160,8 @@ class UserApiTests(TestCase):
 			'country': "US",
 			'zipcode': "12345"
 		}
-		response = self.client.post('/models/api/v1/users/create/', data)
+		url = reverse('models:users-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -182,7 +192,8 @@ class UserApiTests(TestCase):
 			'country': "US",
 			'zipcode': "12345"
 		}
-		response = self.client.post('/models/api/v1/users/create/', data)
+		url = reverse('models:users-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 

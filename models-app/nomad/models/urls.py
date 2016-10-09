@@ -54,7 +54,7 @@ urlpatterns = [
 	url(r'^tags/(?P<tag_id>[0-9]+)/$', views.tags.detail, name='tags-detail'),
 
 	# e.g. models/api/v1/tags/create
-	url(r'^tags/create/$', views.tags.create, name='tags-detail'),
+	url(r'^tags/create/$', views.tags.create, name='tags-create'),
 
 ]
 

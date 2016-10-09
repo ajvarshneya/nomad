@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 from models.models import *
 import json
 
@@ -21,11 +22,15 @@ class ListingApiTests(TestCase):
 				self.assertEqual(json_result[key], listing.user.id)
 			elif key == "baths":
 				self.assertEqual(json_result[key], str(listing.baths))
+			elif key == "created_at" or key == "updated_at":
+				# Skip created_at and updated_at fields
+				continue
 			else:
 				self.assertEqual(json_result[key], getattr(listing, key))
 
 	def test_listing_index(self):
-		response = self.client.get('/models/api/v1/listings/')
+		url = reverse('models:listings-index')
+		response = self.client.get(url)
 		listings = Listing.objects.all()
 
 		self.assertEqual(response.status_code, 200)
@@ -37,7 +42,8 @@ class ListingApiTests(TestCase):
 		listing_id = 1
 		listing = Listing.objects.get(pk=listing_id)
 
-		response = self.client.get('/models/api/v1/listings/' + str(listing_id) + '/')
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -49,7 +55,8 @@ class ListingApiTests(TestCase):
 	def test_listing_detail_get_invalid(self):
 		listing_id = 0
 
-		response = self.client.get('/models/api/v1/listings/' + str(listing_id) + '/')
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -65,7 +72,8 @@ class ListingApiTests(TestCase):
 		data = model_to_dict(listing)
 		data['title'] = "New title here"
 
-		response = self.client.post('/models/api/v1/listings/' + str(listing_id) + '/', data)
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -86,7 +94,8 @@ class ListingApiTests(TestCase):
 		data.pop('id', None)
 		data['title'] = "New title here"
 
-		response = self.client.post('/models/api/v1/listings/' + str(listing_id) + '/')
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -102,7 +111,8 @@ class ListingApiTests(TestCase):
 		data = model_to_dict(listing)
 		data.pop('title', None)
 
-		response = self.client.post('/models/api/v1/listings/' + str(listing_id) + '/', data)
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -116,7 +126,8 @@ class ListingApiTests(TestCase):
 
 	def test_listing_detail_delete_valid(self):
 		listing_id = 1
-		response = self.client.delete('/models/api/v1/listings/' + str(listing_id) + '/')
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -125,7 +136,8 @@ class ListingApiTests(TestCase):
 
 	def test_listing_detail_delete_invalid(self):
 		listing_id = 0
-		response = self.client.delete('/models/api/v1/listings/' + str(listing_id) + '/')
+		url = reverse('models:listings-detail', kwargs={'listing_id': listing_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -147,8 +159,8 @@ class ListingApiTests(TestCase):
 			"user": "1",
 			"price": "250",
 		}
-
-		response = self.client.post('/models/api/v1/listings/create/', data)
+		url = reverse('models:listings-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -173,8 +185,8 @@ class ListingApiTests(TestCase):
 			"user": "1",
 			# "price": "250",
 		}
-
-		response = self.client.post('/models/api/v1/listings/create/', data)
+		url = reverse('models:listings-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 

@@ -1,5 +1,6 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
+from django.core.urlresolvers import reverse
 from models.models import *
 import json
 
@@ -20,7 +21,8 @@ class TagApiTests(TestCase):
 				self.assertEqual(json_result[key], getattr(tag, key))
 
 	def test_tag_index(self):
-		response = self.client.get('/models/api/v1/tags/')
+		url = reverse('models:tags-index')
+		response = self.client.get(url)
 		tags = Tag.objects.all()
 
 		self.assertEqual(response.status_code, 200)
@@ -36,7 +38,8 @@ class TagApiTests(TestCase):
 		tag_id = 1
 		tag = Tag.objects.get(pk=tag_id)
 
-		response = self.client.get('/models/api/v1/tags/' + str(tag_id) + '/')
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -48,7 +51,8 @@ class TagApiTests(TestCase):
 	def test_tag_detail_get_invalid(self):
 		tag_id = 0
 
-		response = self.client.get('/models/api/v1/tags/' + str(tag_id) + '/')
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.get(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -64,7 +68,8 @@ class TagApiTests(TestCase):
 		data = model_to_dict(tag)
 		data['text'] = "New text here"
 
-		response = self.client.post('/models/api/v1/tags/' + str(tag_id) + '/', data)
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -85,7 +90,8 @@ class TagApiTests(TestCase):
 		data.pop('id', None)
 		data['text'] = "New title here"
 
-		response = self.client.post('/models/api/v1/tags/' + str(tag_id) + '/')
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.post(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -97,7 +103,8 @@ class TagApiTests(TestCase):
 		data = model_to_dict(tag)
 		data.pop('text', None)
 
-		response = self.client.post('/models/api/v1/tags/' + str(tag_id) + '/', data)
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -111,7 +118,8 @@ class TagApiTests(TestCase):
 
 	def test_tag_detail_delete_valid(self):
 		tag_id = 1
-		response = self.client.delete('/models/api/v1/tags/' + str(tag_id) + '/')
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -120,7 +128,8 @@ class TagApiTests(TestCase):
 
 	def test_tag_detail_delete_invalid(self):
 		tag_id = 0
-		response = self.client.delete('/models/api/v1/tags/' + str(tag_id) + '/')
+		url = reverse('models:tags-detail', kwargs={"tag_id": tag_id})
+		response = self.client.delete(url)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -135,7 +144,8 @@ class TagApiTests(TestCase):
 			"text": "suburban",
 			"listings": 1,
 		}
-		response = self.client.post('/models/api/v1/tags/create/', data)
+		url = reverse('models:tags-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
@@ -153,7 +163,8 @@ class TagApiTests(TestCase):
 			# "text": "suburban",
 			"listings": 1,
 		}
-		response = self.client.post('/models/api/v1/tags/create/', data)
+		url = reverse('models:tags-create')
+		response = self.client.post(url, data)
 
 		self.assertEqual(response.status_code, 200)
 
