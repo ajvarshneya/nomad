@@ -137,6 +137,9 @@ def create(request):
 def __listing_to_dict(listing):
 	listing_dict = model_to_dict(listing)
 
+	listing_dict['created_at'] = listing.created_at
+	listing_dict['updated_at'] = listing.updated_at
+
 	# Get all images for the listing and remove redundant listing id info on each image
 	image_dict_list = [model_to_dict(image) for image in listing.images.all()]
 	for image_dict in image_dict_list:
@@ -144,9 +147,3 @@ def __listing_to_dict(listing):
 	listing_dict['images'] = image_dict_list
 
 	return listing_dict
-
-
-#def most_recent(request, count):
-#	listings = Listings.objects.order_by()
-
-#def most_popular(request, count):
