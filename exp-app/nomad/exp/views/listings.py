@@ -64,6 +64,33 @@ def detail(request, listing_id):
     return JsonResponse(response)
 
 # Returns a JSON object for the k most recent listings 
-# def most_recent(request, k):
-#     response = {}
-#     return JsonResponse(response)
+def most_recent(request):
+    response = {}
+
+    # Get listings sorted by create date
+    listing_request = urllib.request.Request('http://models-api:8000/models/api/v1/listings/?sort=created_desc')
+    json_listing_response = urllib.request.urlopen(listing_request).read().decode('utf-8')
+    listing_response = json.loads(json_listing_response)
+
+    # Check for errors
+    if not listing_response["ok"]:
+        response["result"] = None
+        response["ok"] = False
+        return JsonResponse(response)
+
+    result = listing_response["result"]
+
+    # Get the limit from the url (or return all if no limit)
+    limit = request.GET.get('limit', None)
+    if limit:
+        result = result[:int(limit)]
+
+    # Send the response back
+    response["ok"] = True
+    response["result"] = result
+    return JsonResponse(response)
+
+
+# Returns a JSON object for the k most popular listings
+def most_popular(request, k):
+    pass

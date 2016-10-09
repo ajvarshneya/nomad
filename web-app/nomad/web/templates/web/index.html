@@ -16,18 +16,17 @@
     			<input class= " col-md-12 col-xs-10 " type = "text" class = "form-control" placeholder = "Going on Vacation">
     		</div>
     	</div> -->
-    	<h3> Wanderlust</h3>
+    	<h3>Most Recent</h3>
     	<div class="row">
-    		<div class="col-md-4">
-    			<div class="custom-box" id="item1">AJ</div>
-    		</div>
-    		<div class="col-md-4">
-    			<div class="custom-box" id="item2">Spencer</div>
-    		</div>
-    		<div class="col-md-4">
-				<div class="custom-box" id="item3">Dave</div>
-    		</div>
+            {% for listing in most_recent_listings %}
+            <div class="col-md-4">
+                <div class="custom-box" style="background-image: linear-gradient( rgba(0,0,0,.5), rgba(0,0,0,.5) ), url({{ listing.images.0.url_full }})">
+                    {{ listing.title }}
+                </div>
+            </div>
+            {% endfor %}
     	</div>
+        <!--
     	<h3>Whatttt????</h3>
     	<div class="row">
     		<div class="col-md-4">
@@ -40,6 +39,7 @@
     			<div class="custom-box" id="item6">Testing</div>
     		</div>
     	</div>
+        -->
 	</div>
     
 {% endblock %}

@@ -8,12 +8,23 @@ def index(request):
 	# Filter by user id
 	user_id = int(request.GET.get('user', -1))
 	if user_id != -1:
-		listings = [listing for listing in listings if listing.user.id == user_id]
+		listings = listings.filter(user_id=user_id)
+		# listings = [listing for listing in listings if listing.user.id == user_id]
 
 	# Filter by country
 	country = request.GET.get('country', None)
 	if country:
-		listings = [listing for listing in listings if listing.country == country]
+		listings = listings.filter(country=country)
+		# listings = [listing for listing in listings if listing.country == country]
+
+	# Check for sort order
+	sort_param = request.GET.get('sort', None)
+	if sort_param == "created_desc":
+		listings = listings.order_by('-created_at')
+	elif sort_param == "price_desc":
+		listings = listings.order_by('-price')
+	elif sort_param == "price_asc":
+		listings = listings.order_by('price')
 
 	listing_dict_list = [__listing_to_dict(listing) for listing in listings]
 
