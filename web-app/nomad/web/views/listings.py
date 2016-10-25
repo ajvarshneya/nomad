@@ -3,7 +3,7 @@ import urllib.parse
 import json
 import requests
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse as reverse
 from django.template import loader
@@ -70,10 +70,9 @@ def create(request):
 			if json_response["error_type"] == 'auth':
 				return HttpResponseRedirect(get_next_url('web:auth-login', 'web:listings-create'))
 
-		# No errors, so listing detail page
-		# context = {'listing': response.text}
-		context = {'listing': json_response['result']}
-		return render(request, 'web/listing-detail.html', context)
+		# No errors, so redirect to listing detail page
+		listing_id = json_response['result']['id']
+		return redirect('web:listings-detail', listing_id=listing_id)
 
 def get_next_url(base, next):
 	return "{}?next={}".format(reverse(base), reverse(next))
