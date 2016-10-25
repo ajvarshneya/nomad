@@ -1,32 +1,32 @@
 # Project 4
 
 ## Required Parts
-- User stories
-- Unit tests
-	- Authenticator
-		- Create
-		- Check
-		- Delete
+- ~~User stories~~
+- ~~Unit tests~~
+	- ~~Authenticator~~
+		- ~~Create~~
+		- ~~Check~~
+		- ~~Delete~~
 	- ~~Create listings~~
 - User accounts
-	- Create account page
+	- ~~Create account page~~
 		- ~~Web (Django forms)~~ (needs exp)
-		- Exp
-	- Login page
+		- ~~Exp~~
+	- ~~Login page~~
 		- ~~Web (Django forms)~~ (needs exp)
-		- Exp
-	- Logout page
+		- ~~Exp~~
+	- ~~Logout page~~
 		- ~~Web (Django forms)~~ (needs exp)
-		- Exp
-- Authenticators
+		- ~~Exp~~
+- ~~Authenticators~~
 	- ~~Authenticator model~~
-	- Delete authenticators when the user logs out
+	- ~~Delete authenticators when the user logs out~~
 	- ~~Check if authenticator already exists in the DB~~
-- Create listings page
+- ~~Create listings page~~
 	- ~~Web (Django Forms)~~
 	- ~~Exp~~
 	- ~~Users should have to login to create a new listing~~
-		- **Note:** double check this once exp service is up
+		- ~~**Note:** double check this once exp service is up~~
 
 
 ## Feedback

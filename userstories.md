@@ -38,20 +38,27 @@
             - `test_auth_check_invalid`
             - `test_auth_create_new`
             - `test_auth_create_existing`
+        - exp - `tests.py`
+            - `test_login_valid`
+            - `test_login_invalid`
 - As a User, I would like to logout of the system
     - Tests:
         - models - `authenticator_tests.py`
             - `test_auth_delete_valid`
             - `test_auth_delete_invalid`
+        - exp - `tests.py`
+            - `test_logout_valid`
+            - `test_logout_invalid`
 - As a User, I would like to make a new account
     - Tests:
         - models - `user_tests.py`
             - `test_user_create_valid`
             - `test_user_create_invalid`
+        - exp - `test.py`
+            - `test_create_user_valid`
+            - `test_create_user_invalid`
 - As a User, I would like to create a new listing
     - Tests:
         - models - `listing_tests.py`
             - `test_listing_create_valid`
             - `test_listing_create_invalid`
-- As a User, I would like to login to have my listings be secure (must login to view them)
-    - Tests:
