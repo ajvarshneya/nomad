@@ -20,7 +20,7 @@ def __create_post(request):
 	form = forms.UserForm(request.POST)
 
 	if form.is_valid():
-		# Copy the cleaded data items to data
+		# Copy cleaned data items to data
 		data = {}
 		for field in form.cleaned_data:
 			data[field] = form.cleaned_data[field]

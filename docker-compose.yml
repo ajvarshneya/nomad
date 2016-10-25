@@ -25,7 +25,8 @@ exp:
     ports:
         - "8002:8000"
     command: >
-            bash -c "echo 'Starting exp wsgi...' &&
+            bash -c "pip install requests &&
+                    echo 'Starting exp wsgi...' &&
                     mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
 
 web:
@@ -37,5 +38,6 @@ web:
     ports:
         - "8000:8000"
     command: >
-            bash -c "echo 'Starting web wsgi...' &&
+            bash -c "pip install requests &&
+                echo 'Starting web wsgi...' &&
                 mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"

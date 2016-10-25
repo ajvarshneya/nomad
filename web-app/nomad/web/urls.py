@@ -10,6 +10,7 @@ urlpatterns = [
     # Listings
     url(r'^listings/$', views.listings.index, name='listings-index'),
     url(r'^listings/(?P<listing_id>[0-9]+)/$', views.listings.detail, name='listings-detail'),
+    url(r'^listings/create/$', views.listings.create, name='listings-create'),
 
     # Users
     url(r'^users/create/$', views.users.create, name='users-create'),
