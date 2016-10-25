@@ -3,3 +3,4 @@ from .listing_tests import *
 from .reservations_tests import *
 from .review_tests import *
 from .tag_tests import *
+from .authenticator_tests import *
