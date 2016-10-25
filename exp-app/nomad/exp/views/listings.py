@@ -156,7 +156,7 @@ def most_popular(request):
 def create(request):
     response = {}
 
-    # # Check for authentication via the models layer
+    # Check for authentication via the models layer
     auth = request.POST['auth']
     url = 'http://models-api:8000/models/api/v1/auth/check/{}'.format(auth)
     r = requests.get(url)
@@ -191,3 +191,7 @@ def create(request):
     response["ok"] = True
     response["result"] = json_response["result"]
     return JsonResponse(response)
+
+
+
+

@@ -11,6 +11,8 @@ urlpatterns = [
 	# e.g. models/api/v1/users/1234/
 	url(r'^users/(?P<user_id>[0-9]+)/$', views.users.detail, name='users-detail'),
 
+	url(r'^users/auth/$', views.users.auth, name='users-auth'),
+
 	# e.g. models/api/v1/users/create/
 	url(r'^users/create/$', views.users.create, name='users-create'),
 

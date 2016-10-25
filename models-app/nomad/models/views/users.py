@@ -14,6 +14,28 @@ def index(request):
 
 	return JsonResponse(response)
 
+
+def auth(request):
+	username = request.POST['username']
+	password = request.POST['password']
+
+	try:
+		user = User.objects.get(username=username, password=password)
+	except User.DoesNotExist:
+		return JsonResponse({
+			"ok" : False,
+			"error": "User does not exist"
+			})
+
+	user_dict = __user_to_dict(user)
+
+	response = {
+		"ok": True,
+		"result": user_dict
+	}
+
+	return JsonResponse(response)	
+
 def detail(request, user_id):
 	if request.method == "GET":
 		return __detail_get(request, user_id)
@@ -21,7 +43,7 @@ def detail(request, user_id):
 		return __detail_post(request, user_id)
 	elif request.method == "DELETE":
 		return __detail_delete(request, user_id)
-		
+
 def __detail_get(request, user_id):
 	try:
 		user = User.objects.get(pk=user_id)
@@ -52,7 +74,7 @@ def __detail_get(request, user_id):
 		"result": truncated_user_dict
 	}
 
-	return JsonResponse(response)
+	return JsonResponse(response)	
 
 def __detail_post(request, user_id):
 	try:
