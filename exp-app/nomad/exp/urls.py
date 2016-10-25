@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^listings/create/$', views.listings.create, name='listings-create'),
     url(r'^auth/login$', views.auth.login, name='auth-login'),
     url(r'^auth/logout$', views.auth.logout, name='auth-logout'),
-
+    url(r'^auth/create_user$', views.auth.create_user, name='auth-create-user')
 ]

@@ -53,4 +53,35 @@ def logout(request):
     return JsonResponse(response)
 
 def create_user(request):
-    pass
+
+    data = {}
+    for field in request.POST:
+        data[field] = request.POST[field]
+
+    url = 'http://models-api:8000/models/api/v1/users/create/'
+
+    r = requests.post(url, data).json()
+
+    return JsonResponse(r)
+
+    if not r['ok']:
+        return JsonResponse({
+            'ok': False,
+            'result': None,
+            'error': 'Failed to create user.'
+        })
+
+    return JsonResponse(r)
+
+
+
+
+
+
+
+
+
+
+
+
+

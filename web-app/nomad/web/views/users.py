@@ -1,6 +1,7 @@
 import urllib.request
 import urllib.parse
 import json
+import requests
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
@@ -25,7 +26,13 @@ def __create_post(request):
 		for field in form.cleaned_data:
 			data[field] = form.cleaned_data[field]
 
-		# TODO: Call exp service to create user
+		# Call exp service to create user
+		url = 'http://exp-api:8000/exp/api/v1/auth/create_user'
+		response = requests.post(url, data).json()
+
+		# TODO: Failure behavior
+		if not response['ok']:
+			pass
 
 		# TODO: Return the authenticator to the response redirect
 		return HttpResponseRedirect('/')

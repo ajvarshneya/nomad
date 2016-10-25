@@ -14,7 +14,6 @@ def index(request):
 
 	return JsonResponse(response)
 
-
 def auth(request):
 	username = request.POST['username']
 	password = request.POST['password']
