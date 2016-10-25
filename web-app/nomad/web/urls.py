@@ -7,6 +7,8 @@ urlpatterns = [
     url(r'^$', views.home.index, name='index'),
     url(r'^listings/$', views.listings.index, name='listings-index'),
     url(r'^listings/(?P<listing_id>[0-9]+)/$', views.listings.detail, name='listings-detail'),
+    
+    url(r'^users/create/$', views.users.create, name='users-create'),
 ]
 
 
