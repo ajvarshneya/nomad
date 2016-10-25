@@ -43,4 +43,10 @@ def __login_post(request):
 	return http_response
 
 def logout(request):
-	pass
+	# TODO: Delete authenticator via EXP service
+
+	# Clear authenticator from cookies
+	next = request.GET.get('next') or reverse('web:index')
+	http_response = HttpResponseRedirect(next)
+	http_response.delete_cookie('auth')
+	return http_response

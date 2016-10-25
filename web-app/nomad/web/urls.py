@@ -16,7 +16,7 @@ urlpatterns = [
 
     # Auth
     url(r'^login/$', views.auth.login, name='auth-login'),
-
+    url(r'^logout/$', views.auth.logout, name='auth-logout'),
 ]
 
 

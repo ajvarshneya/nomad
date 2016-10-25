@@ -14,16 +14,23 @@
 		<!-- Content for dropdown -->
 		<div class="collapse navbar-collapse" id="nomad-navbar-collapse">
 			<ul class="nav navbar-nav navbar-right">
+				{% if request.COOKIES.auth %}
 				<li>
 					<a href="#">
 						<span class="glyphicon glyphicon-user" aria-hidden="true"></span> User
 					</a>
 				</li>
 				<li>
-					<a href="#">
-						<span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span> Cart
-					</a>
+					<a href="{% url 'web:auth-logout' %}?next={{request.path}}">Logout</a>
 				</li>
+				{% else %}
+				<li>
+					<a href="{% url 'web:users-create' %}">Sign Up</a>
+				</li>
+				<li>
+					<a href="{% url 'web:auth-login' %}?next={{request.path}}">Login</a>
+				</li>
+				{% endif %}
 			</ul>
 		</div>
 	</div>
