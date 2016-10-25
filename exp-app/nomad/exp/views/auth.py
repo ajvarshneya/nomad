@@ -60,18 +60,18 @@ def create_user(request):
 
     url = 'http://models-api:8000/models/api/v1/users/create/'
 
-    r = requests.post(url, data).json()
+    response = requests.post(url, data).json()
 
-    return JsonResponse(r)
+    return JsonResponse(response)
 
-    if not r['ok']:
+    if not response['ok']:
         return JsonResponse({
             'ok': False,
             'result': None,
             'error': 'Failed to create user.'
         })
 
-    return JsonResponse(r)
+    return JsonResponse(response)
 
 
 
