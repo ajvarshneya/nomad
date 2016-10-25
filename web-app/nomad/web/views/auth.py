@@ -39,7 +39,7 @@ def __login_post(request):
 	# Set authenticator in request cookie and redirect back to next
 	# TODO: Get authenticator from EXP response
 	http_response = HttpResponseRedirect(next)
-	http_response.set_cookie('auth', "TODO: authenticator here")
+	http_response.set_cookie('auth', "invalidauth")
 	return http_response
 
 def logout(request):

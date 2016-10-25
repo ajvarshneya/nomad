@@ -157,28 +157,27 @@ def create(request):
     response = {}
 
     # # Check for authentication via the models layer
-    # auth = request.POST['auth']
-    # url = 'http://models-api:8000/models/api/v1/auth/check/{}'.format(auth)
-    # response = request.get(url, data)
-    # json_response = response.json()
+    auth = request.POST['auth']
+    url = 'http://models-api:8000/models/api/v1/auth/check/{}'.format(auth)
+    r = requests.get(url)
+    json_response = r.json()
 
-    # # Return auth error if auth is not valid
-    # if not json_response["ok"]:
-    #     response["ok"] = False
-    #     response["error_type"] = "auth"
-    #     response["error"] = "Invalid authentication"
-    #     return JsonResponse(response)
+    # Return auth error if auth is not valid
+    if not json_response["ok"]:
+        response["ok"] = False
+        response["error_type"] = "auth"
+        response["error"] = "Invalid authentication"
+        return JsonResponse(response)
 
     # Make request to create listing model
-    url = 'http://models-api:8000/models/api/v1/listings/create/'
     data = {}
     for field in request.POST:
         data[field] = request.POST[field]
 
     # Set the user from the authenticator
-    # TODO: DO this manually for testing
-    data['user'] = 1
+    data['user'] = json_response['result']['user']
 
+    url = 'http://models-api:8000/models/api/v1/listings/create/'
     r = requests.post(url, data)
     json_response = r.json()
 

@@ -68,9 +68,10 @@ def create(request):
 		# If auth not valid, redirect to login with next=listings-create
 		if not json_response["ok"]:
 			if json_response["error_type"] == 'auth':
-				return HttpResponseRedirect(get_next_url('web:auth-login', 'listings-create'))
+				return HttpResponseRedirect(get_next_url('web:auth-login', 'web:listings-create'))
 
 		# No errors, so listing detail page
+		# context = {'listing': response.text}
 		context = {'listing': json_response['result']}
 		return render(request, 'web/listing-detail.html', context)
 

@@ -18,9 +18,10 @@
 	- Delete authenticators when the user logs out
 	- ~~Check if authenticator already exists in the DB~~
 - Create listings page
-	- Web (Django Forms)
-	- Exp
-	- Users should have to login to create a new listing
+	- ~~Web (Django Forms)~~
+	- ~~Exp~~
+	- ~~Users should have to login to create a new listing~~
+		- **Note:** double check this once exp service is up
 
 
 ## Feedback
