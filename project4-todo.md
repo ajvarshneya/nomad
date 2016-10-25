@@ -3,6 +3,11 @@
 ## Required Parts
 - User stories
 - Unit tests
+	- Authenticator
+		- Create
+		- Check
+		- Delete
+	- ~~Create listings~~
 - User accounts
 	- Create account page
 		- ~~Web (Django forms)~~ (needs exp)

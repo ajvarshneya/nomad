@@ -1,32 +1,57 @@
+# User Stories and Corresponding Unit Tests
 
-USER STORIES AND CORRESPONDING UNIT TESTS
+## Project 3
+
+#### WEB LAYER
+
+- As a User I would like to be able to see the home page when I request the site -> HomeViewTests
+    - Acceptance: 
+        - The home page is shown when requested
 
 
-WEB LAYER
--As a User I would like to be able to see the home page when I request the site ------>  HomeViewTests
-    -Acceptance: 
-        -The home page is shown when requested
+#### MODEL LAYER
 
-
-MODEL LAYER
--As a User I would like to be able view available Listings ------>  ListingViewTests
-    -Acceptance
+- As a User I would like to be able view available Listings -> ListingViewTests
+    - Acceptance
         - If there are no listings to show then display No listings found
         - If there there is an invalid user id display 404 page with invalid listing id
         - If there are listings to be shown the show the listings
-
-- As a User I would like to be able to get a valid listing by id ------> listing_tests.py, test_listing_get_valid
-    -Acceptance
+- As a User I would like to be able to get a valid listing by id -> listing_tests.py, test_listing_get_valid
+    - Acceptance
         - Returns the appropriate JSON of the listing of the id given
+- As a User I would like to be able to delete a valid listing by id -> listing_tests.py, test_listing_delete_valid
+    - Acceptance
+        - Return a JSON with listing id of listing that was deleted  
+- As a User I would like to be able to create a valid listing  -> listing_tests.py, test_listing_post_valid
+    - Acceptance
+        - Return the modified listing with its new values
+- As a User I would like to be able to view a list of all listings  -> listing_tests.py, test_listing_index
+    - Acceptance
+        - Return a JSON with all the listings
 
-- As a User I would like to be able to delete a valid listing by id ------> listing_tests.py, test_listing_delete_valid
-    -Acceptance
-        -Return a JSON with listing id of listing that was deleted  
+## Project 4
 
-- As a User I would like to be able to create a valid listing  ------> listing_tests.py, test_listing_post_valid
-    -Acceptance
-        -Return the modified listing with its new values
-
-- As a User I would like to be able to view a list of all listings  ------> listing_tests.py, test_listing_index
-    -Acceptance
-        -Return a JSON with all the listings
+- As a User, I would like to login to the system
+    - Tests:
+        - models - `authenticator_tests.py`
+            - `test_auth_check_valid`
+            - `test_auth_check_invalid`
+            - `test_auth_create_new`
+            - `test_auth_create_existing`
+- As a User, I would like to logout of the system
+    - Tests:
+        - models - `authenticator_tests.py`
+            - `test_auth_delete_valid`
+            - `test_auth_delete_invalid`
+- As a User, I would like to make a new account
+    - Tests:
+        - models - `user_tests.py`
+            - `test_user_create_valid`
+            - `test_user_create_invalid`
+- As a User, I would like to create a new listing
+    - Tests:
+        - models - `listing_tests.py`
+            - `test_listing_create_valid`
+            - `test_listing_create_invalid`
+- As a User, I would like to login to have my listings be secure (must login to view them)
+    - Tests:
