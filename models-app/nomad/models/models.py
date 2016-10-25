@@ -149,8 +149,8 @@ class ListingImage(Image):
 		return "{} {}".format(self.listing.title, self.id)
 
 class Authenticator(models.Model):
-	user = models.OneToOneField(User, related_name='authenticator')
-	authenticator = models.CharField(max_length=256)
+	user = models.OneToOneField(User, related_name='authenticator', blank=True, null=True)
+	authenticator = models.CharField(max_length=64, primary_key=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):

@@ -56,6 +56,15 @@ urlpatterns = [
 	# e.g. models/api/v1/tags/create
 	url(r'^tags/create/$', views.tags.create, name='tags-create'),
 
+	# e.g. models/api/v1/auth/check
+	url(r'^auth/check/(?P<authenticator>[a-zA-Z0-9]+)/$', views.authenticators.check, name='auth-check'),
+
+	# e.g. models/api/v1/auth/create
+	url(r'^auth/create/(?P<user_id>[0-9]+)/$', views.authenticators.create, name='auth-create'),	
+
+	# e.g. models/api/v1/auth/delete
+	url(r'^auth/delete/(?P<authenticator>[a-zA-Z0-9]+)/$', views.authenticators.delete, name='auth-delete'),
+
 ]
 
 
