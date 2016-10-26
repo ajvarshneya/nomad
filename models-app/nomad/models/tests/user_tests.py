@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.forms.models import model_to_dict
 from django.core.urlresolvers import reverse
+from django.contrib.auth import hashers
 from models.models import *
 import json
 
@@ -176,7 +177,10 @@ class UserApiTests(TestCase):
 
 		# Compare all data fields to those in the model
 		for key in data:
-			self.assertEqual(data[key], getattr(user, key))
+			if key == "password":
+				hashers.check_password(data[key], user.password)
+			else:
+				self.assertEqual(data[key], getattr(user, key))
 
 	def test_user_create_invalid(self):
 		data = {

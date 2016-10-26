@@ -1,5 +1,6 @@
 from django.http import JsonResponse, QueryDict
 from django.forms.models import model_to_dict
+from django.contrib.auth import hashers
 from models.models import *
 
 def index(request):
@@ -19,11 +20,18 @@ def auth(request):
 	password = request.POST['password']
 
 	try:
-		user = User.objects.get(username=username, password=password)
+		user = User.objects.get(username=username)
 	except User.DoesNotExist:
 		return JsonResponse({
 			"ok" : False,
 			"error": "User does not exist"
+			})
+
+	# Check password
+	if not hashers.check_password(password, user.password):
+		return JsonResponse({
+			"ok": False,
+			"error": "Invalid password",
 			})
 
 	user_dict = __user_to_dict(user)
@@ -99,6 +107,7 @@ def __detail_post(request, user_id):
 
 	# Set the user id to the one in the database and then save
 	new_user.id = int(user_id)
+	new_user.password = hashers.make_password(new_user.password)
 	new_user.save()
 
 	user_dict = __user_to_dict(new_user)
@@ -139,7 +148,9 @@ def create(request):
 			"error": user_form.errors
 			})
 
-	new_user = user_form.save()
+	new_user = user_form.save(commit=False)
+	new_user.password = hashers.make_password(new_user.password)
+	new_user.save()
 
 	user_dict = __user_to_dict(new_user)
 
