@@ -3,8 +3,10 @@ import urllib.parse
 import json
 import requests
 
+
 from django.http import JsonResponse, QueryDict
 from kafka import KafkaProducer
+from elasticsearch import Elasticsearch as Elasticsearch
 
 # Returns a JSON object of all the listings in the database
 def index(request):
@@ -196,6 +198,31 @@ def create(request):
     response["ok"] = True
     response["result"] = json_response["result"]
     return JsonResponse(response)
+
+
+
+
+def search(request):
+    #return JsonResponse({})
+    es = Elasticsearch(['es'])
+    query_body = request.GET.get('query',None)
+    query_results = es.search(index ='listing_index',body = query_body)
+    query_results = query_results['hits']
+    query_results = query_results['hits']
+    #print(query_body)
+    if query_body == None:
+         return JsonResponse({})
+    rank_results = {}
+    #print(query_results[0])
+    for result in query_results:
+        score = float(query_results['_score'])
+        list_body = query_results['_source']
+        rank_results[score] = list_body
+    rank_results = sorted(mydict.iterkeys(),reverse = True)
+    jsonresponse = []
+    for key in rank_results:
+        jsonresponse.append(rank_results[key])
+    return json.dumps(jsonresponse)
 
 
 
