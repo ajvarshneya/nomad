@@ -15,11 +15,11 @@ es:
 batch:
     image: tp33/django
     container_name: batch
-    volumes:
-        - ./batch:/batch
     links:
         - kafka:kafka
         - es:es
+    volumes:
+        - ./batch:/batch
     command: >
             bash -c "cd /batch/ &&
                     echo 'Starting kafka-es batch' &&
@@ -47,6 +47,8 @@ exp:
     image: tp33/django
     links:
         - models:models-api
+        - kafka:kafka
+        - es:es
     volumes:
         - ./exp-app:/app
     ports:

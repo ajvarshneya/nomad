@@ -4,6 +4,7 @@ import json
 import requests
 
 from django.http import JsonResponse, QueryDict
+from kafka import KafkaProducer
 
 # Returns a JSON object of all the listings in the database
 def index(request):
@@ -186,6 +187,10 @@ def create(request):
         response["result"] = None
         response["ok"] = False
         return JsonResponse(response)
+
+    # Model was created successfully, index it with elastic search
+    producer = KafkaProducer(bootstrap_servers='kafka:9092')
+    producer.send('new-listings-topic', json.dumps(json_response['result']).encode('utf-8'))
 
     # Return model information
     response["ok"] = True
