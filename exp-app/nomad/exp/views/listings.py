@@ -5,6 +5,7 @@ import requests
 
 from django.http import JsonResponse, QueryDict
 from kafka import KafkaProducer
+from elasticsearch import Elasticsearch
 
 # Returns a JSON object of all the listings in the database
 def index(request):
@@ -197,6 +198,32 @@ def create(request):
     response["result"] = json_response["result"]
     return JsonResponse(response)
 
+def search(request):
+    # Get query from exp service
+    query = request.GET['query']
+    size = 10
 
+    # Prepare query
+    es = Elasticsearch(['es'])
+    query_body = {
+        'query' : {
+            'query_string' : {
+                'query' : query
+            }
+        },
+        'size' : size
+    }
 
+    # Check if index exists
+    if not es.indices.exists(index='listing_index'):
+        return JsonResponse({'result' : None, 'ok' : False})
 
+    if query_body == None:
+        return JsonResponse({'result' : None, 'ok' : False})
+
+    # Extract hits from ES results
+    results = es.search(index='listing_index', body=query_body)['hits']['hits']
+    results = [result['_source'] for result in results]
+
+    # Rank results by score
+    return JsonResponse({'result' : results, 'ok' : True})

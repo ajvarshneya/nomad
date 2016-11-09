@@ -8,7 +8,8 @@ urlpatterns = [
     url(r'^listings/most_recent/$', views.listings.most_recent, name='listings-most-recent'),
     url(r'^listings/most_popular/$', views.listings.most_popular, name='listings-most-popular'),
     url(r'^listings/create/$', views.listings.create, name='listings-create'),
+    url(r'^listings/search$', views.listings.search, name='listings-search'),
     url(r'^auth/login$', views.auth.login, name='auth-login'),
     url(r'^auth/logout$', views.auth.logout, name='auth-logout'),
-    url(r'^auth/create_user$', views.auth.create_user, name='auth-create-user')
+    url(r'^auth/create_user$', views.auth.create_user, name='auth-create-user'),
 ]
