@@ -8,6 +8,8 @@
 	    <a href="{% url 'web:listings-detail' listing.id %}" class="list-group-item">
 	      {{ listing.title }} 
 	    </a>
+      {% empty %}
+      <span class="list-group-item">No results found.</span>
 	  {% endfor %}
 	</div>
 </div>

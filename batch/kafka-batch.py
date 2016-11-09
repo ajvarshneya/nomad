@@ -22,8 +22,8 @@ while True:
 		listing = json.loads((message.value).decode('utf-8'))
 
 		# Add the listing from the message to elasticsearch
-		es.index(index='listing-index', doc_type='listing', id=listing['id'], body=listing)
+		es.index(index='listing_index', doc_type='listing', id=listing['id'], body=listing)
 
 	# If item(s) added, update search index
 	if added_item:
-		es.indices.refresh(index='listing-index')
+		es.indices.refresh(index='listing_index')

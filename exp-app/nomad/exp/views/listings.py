@@ -216,10 +216,7 @@ def search(request):
 
     # Check if index exists
     if not es.indices.exists(index='listing_index'):
-        return JsonResponse({'result' : None, 'ok' : False})
-
-    if query_body == None:
-        return JsonResponse({'result' : None, 'ok' : False})
+        return JsonResponse({'result' : [], 'ok' : True})
 
     # Extract hits from ES results
     results = es.search(index='listing_index', body=query_body)['hits']['hits']
