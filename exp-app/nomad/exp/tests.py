@@ -2,7 +2,10 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.test.client import RequestFactory
 from datetime import datetime
+from kafka import KafkaConsumer
+
 import json
+
 
 def get_json_response(json_response):
 	return json.loads(json_response.content.decode('utf-8'))
@@ -238,4 +241,26 @@ class ListingsExpTests(TestCase):
 
 		json_response = get_json_response(response)
 		self.assertFalse(json_response["ok"])
+
+	# def test_listing_index(self):
+	# 	url = reverse('exp:listings-create')
+	# 	data = {
+	# 		"title": "Relaxing Beach House",
+	# 		"country": "US",
+	# 		"zipcode": "67890",
+	# 		"beds": "4",
+	# 		"city": "beach city",
+	# 		"baths": "4.5",
+	# 		"street": "beach street",
+	# 		"user": "1",
+	# 		"price": "250",
+	# 	}
+	# 	response = self.client.post(url, data)
+	# 	result = get_json_response(response)['result']
+	# 	listing_id = result['id']
+
+	# 	consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
+
+	# 	indexed_data = [json.loads((message.value).decode('utf-8')) for message in consumer][0]
+	# 	self.compare_fields(indexed_data, data)
 

@@ -3,10 +3,9 @@ import urllib.parse
 import json
 import requests
 
-
 from django.http import JsonResponse, QueryDict
 from kafka import KafkaProducer
-from elasticsearch import Elasticsearch as Elasticsearch
+from elasticsearch import Elasticsearch
 
 # Returns a JSON object of all the listings in the database
 def index(request):
@@ -199,31 +198,32 @@ def create(request):
     response["result"] = json_response["result"]
     return JsonResponse(response)
 
-
-
-
 def search(request):
-    #return JsonResponse({})
+    # Get query from exp service
+    query = request.GET['query']
+    size = 10
+
+    # Prepare query
     es = Elasticsearch(['es'])
-    query_body = request.GET.get('query',None)
-    query_results = es.search(index ='listing_index',body = query_body)
-    query_results = query_results['hits']
-    query_results = query_results['hits']
-    #print(query_body)
+    query_body = {
+        'query' : {
+            'query_string' : {
+                'query' : query
+            }
+        },
+        'size' : size
+    }
+
+    # Check if index exists
+    if not es.indices.exists(index='listing_index'):
+        return JsonResponse({'result' : None, 'ok' : False})
+
     if query_body == None:
-         return JsonResponse({})
-    rank_results = {}
-    #print(query_results[0])
-    for result in query_results:
-        score = float(query_results['_score'])
-        list_body = query_results['_source']
-        rank_results[score] = list_body
-    rank_results = sorted(mydict.iterkeys(),reverse = True)
-    jsonresponse = []
-    for key in rank_results:
-        jsonresponse.append(rank_results[key])
-    return json.dumps(jsonresponse)
+        return JsonResponse({'result' : None, 'ok' : False})
 
+    # Extract hits from ES results
+    results = es.search(index='listing_index', body=query_body)['hits']['hits']
+    results = [result['_source'] for result in results]
 
-
-
+    # Rank results by score
+    return JsonResponse({'result' : results, 'ok' : True})

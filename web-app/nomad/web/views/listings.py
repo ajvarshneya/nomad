@@ -4,7 +4,7 @@ import json
 import requests
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect, JsonResponse
 from django.core.urlresolvers import reverse as reverse
 from django.template import loader
 
@@ -73,6 +73,20 @@ def create(request):
 		# No errors, so redirect to listing detail page
 		listing_id = json_response['result']['id']
 		return redirect('web:listings-detail', listing_id=listing_id)
+
+def search(request):
+	template = loader.get_template('web/search-results.html')
+
+	query = request.GET['query']
+	url = 'http://exp-api:8000/exp/api/v1/listings/search?query={}'.format(query)
+	response = requests.get(url)
+	json_response = response.json()
+
+	if "ok" in json_response and json_response["ok"]:
+		context = {"listings" : json_response["result"]}
+		return HttpResponse(template.render(context, request))
+	else:
+		raise Http404(json_response)
 
 def get_next_url(base, next):
 	return "{}?next={}".format(reverse(base), reverse(next))

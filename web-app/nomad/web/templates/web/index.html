@@ -8,8 +8,10 @@
 
  		<h3>Not all those who wander are lost...</h3>
         <div class="row">
-            <div class = "navbar-form center-block" role = "search">
-                <input class= " col-md-12 col-xs-10 " type = "text" class = "form-control" placeholder = "Where to?">
+            <div class="navbar-form center-block">
+                <form action="listings/search" method="get">
+                    <input class="col-md-12 col-xs-10" type="text" name="query" class="form-control" placeholder="Where to?">
+                </form>
             </div>
         </div>
 
