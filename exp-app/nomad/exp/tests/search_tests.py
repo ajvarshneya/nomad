@@ -80,10 +80,49 @@ class SearchExpTests(TestCase):
 		"""
 		Check that search returns results
 		"""
-		pass
+		url = reverse('exp:listings-search')
+		query = "FR"
+		response = self.client.get(url, {'query': query})
+		self.assertEqual(response.status_code, 200)
+
+		json_response = get_json_response(response)
+		self.assertTrue(json_response["ok"])
+		self.assertTrue(json_response["result"])
+
+		json_results = json_response["result"]
+
+		# Perform query directly on ES
+		es = Elasticsearch(['es'])
+		query_body = {
+			'query': {
+				'query_string': {
+					'query': query
+				},
+			},
+			'size': 10
+		}
+		es_results = es.search(index='listing_index', body=query_body)['hits']['hits']
+		es_results = [result['_source'] for result in es_results]
+
+		# Check that the same number of results are returned
+		self.assertEqual(len(json_results), len(es_results))
+
+		# Check that the results are in the same order
+		for i in range(len(json_results)):
+			self.assertEqual(json_results[i]['title'], es_results[i]['title'])
+			self.assertEqual(json_results[i]['street'], es_results[i]['street'])
+			self.assertEqual(json_results[i]['created_at'], es_results[i]['created_at'])
 
 	def test_search_empty(self):
 		"""
 		Check search with empty query
 		"""
-		pass
+		url = reverse('exp:listings-search')
+		query = ""
+		response = self.client.get(url, {'query': query})
+		self.assertEqual(response.status_code, 200)
+
+		# Check that the response has an empty result
+		json_response = get_json_response(response)
+		self.assertTrue(json_response["ok"])
+		self.assertFalse(json_response["result"])
