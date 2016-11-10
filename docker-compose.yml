@@ -56,7 +56,6 @@ exp:
     # Run `load-search-fixtures.py` wth '&' to run the script in the background
     command: >
             bash -c "pip install requests &&
-                    echo 'Loading DB data into search index...' &&
                     python load-search-fixtures.py &
                     echo 'Starting exp wsgi...' &&
                     mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
