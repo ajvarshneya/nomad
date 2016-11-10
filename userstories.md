@@ -62,3 +62,15 @@
         - models - `listing_tests.py`
             - `test_listing_create_valid`
             - `test_listing_create_invalid`
+
+## Project 5
+
+- As a User, I would like my listings to be searchable.
+    - Tests:
+        - exp - `search_tests.py`
+            - `test_listing_kafka`
+- As a User, I would like to search for available listings.
+    - Tests:
+        - exp - `search_tests.py`
+            - `test_search_results`
+            - `test_search_empty`
