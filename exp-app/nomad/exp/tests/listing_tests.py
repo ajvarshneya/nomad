@@ -2,15 +2,11 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.test.client import RequestFactory
 from datetime import datetime
-from kafka import KafkaConsumer
-
 import json
-
 
 def get_json_response(json_response):
 	return json.loads(json_response.content.decode('utf-8'))
 
-# Create your tests here.
 class ListingsExpTests(TestCase):
 	def test_index_valid(self):
 		"""
@@ -135,132 +131,3 @@ class ListingsExpTests(TestCase):
 
 		json_result = json_response["result"]
 		self.assertEqual(len(json_result), limit)
-
-	def test_login_valid(self):
-		url = reverse("exp:auth-login")
-		data = {
-			"username" : "ironman",
-			"password" : "password"
-		}
-		response = self.client.post(url, data)
-		self.assertEqual(response.status_code, 200)
-
-		json_response = get_json_response(response)
-		self.assertTrue(json_response["ok"])
-		self.assertTrue(json_response["result"])
-
-	def test_login_invalid(self):
-		url = reverse("exp:auth-login")
-		data = {
-			"username" : "ironman",
-			"password" : "notthepassword"
-		}
-		response = self.client.post(url, data)
-		self.assertEqual(response.status_code, 200)
-
-		json_response = get_json_response(response)
-		self.assertFalse(json_response["ok"])
-
-	def test_logout_valid(self):
-		# Log in
-		url = reverse("exp:auth-login")
-		data = {
-			"username" : "ironman",
-			"password" : "password"
-		}
-		response = self.client.post(url, data)
-		json_response = get_json_response(response)
-
-		# Log out
-		url = reverse("exp:auth-logout")
-		data = {
-			"authenticator" : json_response["result"]["authenticator"]
-		}
-		response = self.client.post(url, data)
-		self.assertEqual(response.status_code, 200)
-
-		json_response = get_json_response(response)
-		self.assertTrue(json_response["ok"])
-		self.assertTrue(json_response["result"])
-
-	def test_logout_invalid(self):
-		# Log out
-		url = reverse("exp:auth-logout")
-		data = {
-			"authenticator" : "garbagestring"
-		}
-		response = self.client.post(url, data)
-		self.assertEqual(response.status_code, 200)
-
-		json_response = get_json_response(response)
-		self.assertFalse(json_response["ok"])
-
-	def test_create_user_valid(self):
-		# Log in
-		url = reverse("exp:auth-create-user")
-		data = {
-		    "country": "US",
-		    "last_name": "last",
-		    "creditcard": "4111111111111111",
-		    "email": "a@example.com",
-		    "id": 8,
-		    "zipcode": "12345",
-		    "street": "123 example lane",
-		    "first_name": "first",
-		    "city": "somewhere",
-		    "username": "sample_user",
-		    "phone_number": "1234567890",
-		    "password": "password"
-		}
-		response = self.client.post(url, data)
-		self.assertEqual(response.status_code, 200)
-
-		json_response = get_json_response(response)
-		self.assertTrue(json_response["ok"])
-		self.assertTrue(json_response["result"])
-
-	def test_create_user_invalid(self):
-		# Log in
-		url = reverse("exp:auth-create-user")
-		data = {
-		    "country": "US",
-		    "last_name": "last",
-		    "creditcard": "4111111111111111",
-		    "email": "a@example.com",
-		    "id": 8,
-		    "zipcode": "12345",
-		    "street": "123 example lane",
-		    "first_name": "first",
-		    "city": "somewhere",
-		    "username": "sample_user",
-		    "phone_number": "1234567890",
-		    # "password": "password"
-		}
-		response = self.client.post(url, data)
-		self.assertEqual(response.status_code, 200)
-
-		json_response = get_json_response(response)
-		self.assertFalse(json_response["ok"])
-
-	# def test_listing_index(self):
-	# 	url = reverse('exp:listings-create')
-	# 	data = {
-	# 		"title": "Relaxing Beach House",
-	# 		"country": "US",
-	# 		"zipcode": "67890",
-	# 		"beds": "4",
-	# 		"city": "beach city",
-	# 		"baths": "4.5",
-	# 		"street": "beach street",
-	# 		"user": "1",
-	# 		"price": "250",
-	# 	}
-	# 	response = self.client.post(url, data)
-	# 	result = get_json_response(response)['result']
-	# 	listing_id = result['id']
-
-	# 	consumer = KafkaConsumer('new-listings-topic', group_id='listing-indexer', bootstrap_servers=['kafka:9092'])
-
-	# 	indexed_data = [json.loads((message.value).decode('utf-8')) for message in consumer][0]
-	# 	self.compare_fields(indexed_data, data)
-
