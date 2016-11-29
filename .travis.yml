@@ -37,6 +37,14 @@ before_script:
 script:
 # Run tests with --noinput to prevent the build from hanging
 - >
-  docker exec -it web_container bash -c "
+  docker exec -it nomad_models_1 bash -c "
   cd /app/nomad/ && 
+  python manage.py test --noinput"
+- >
+  docker exec -it nomad_exp_1 bash -c "
+  cd /app/nomad/ &&
+  python manage.py test --noinput"
+- >
+  docker exec -it nomad_web_1 bash -c "
+  cd /app/nomad/ &&
   python manage.py test --noinput"
