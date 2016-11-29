@@ -122,6 +122,60 @@ class IntegrationTests(LiveServerTestCase):
 		self.assertIn('Listings', selenium.page_source)
 		self.assertIn('No results found', selenium.page_source)
 
+	def test_most_recent_listings(self):
+		selenium = self.selenium
+
+		# Get the home screen
+		url = self.format_live_server_url('web:index')
+		selenium.get(url)
+
+		# Find the cols in the row under the 'Most Recent' header
+		cols = selenium.find_elements_by_xpath("//h3[text()='Most Recent']/following-sibling::div[1]/child::*")
+		for i in range(len(cols)):
+			col = selenium.find_element_by_xpath("//h3[text()='Most Recent']/following-sibling::div[1]/child::*[" + str(i+1) + "]")
+
+			# Get the item title
+			listing_title = col.text
+
+			# Click the link
+			col.click()
+
+			# Check that the new page has detail information
+			self.assertIn(listing_title, selenium.page_source)
+			self.assertIn('Info', selenium.page_source)
+			self.assertIn('Address', selenium.page_source)
+			self.assertIn('Reviews', selenium.page_source)
+
+			# Go back
+			selenium.back()
+
+	def test_most_popular_listings(self):
+		selenium = self.selenium
+
+		# Get the home screen
+		url = self.format_live_server_url('web:index')
+		selenium.get(url)
+
+		# Find the cols in the row under the 'Most Popular' header
+		cols = selenium.find_elements_by_xpath("//h3[text()='Most Popular']/following-sibling::div[1]/child::*")
+		for i in range(len(cols)):
+			col = selenium.find_element_by_xpath("//h3[text()='Most Popular']/following-sibling::div[1]/child::*[" + str(i+1) + "]")
+
+			# Get the item title
+			listing_title = col.text
+
+			# Click the link
+			col.click()
+
+			# Check that the new page has detail information
+			self.assertIn(listing_title, selenium.page_source)
+			self.assertIn('Info', selenium.page_source)
+			self.assertIn('Address', selenium.page_source)
+			self.assertIn('Reviews', selenium.page_source)
+
+			# Go back
+			selenium.back()
+
 class HomeViewTests(TestCase):
 	def test_index_view_valid(self):
 		"""
