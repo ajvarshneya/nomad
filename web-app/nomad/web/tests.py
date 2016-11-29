@@ -7,6 +7,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.common.keys import Keys
 
 import os
+import re
 import socket
 
 os.environ['DJANGO_LIVE_TEST_SERVER_ADDRESS'] = '0.0.0.0:8004'
@@ -52,12 +53,75 @@ class IntegrationTests(LiveServerTestCase):
 		submit.send_keys(Keys.RETURN)
 
 		# Check that the user is signed in
-		# print(selenium.page_source)
 		self.assertIn('Logout', selenium.page_source)
 		self.assertIn('User', selenium.page_source)
 		self.assertNotIn('Login', selenium.page_source)
 
-# Create your tests here.
+	def test_logout(self):
+		selenium = self.selenium
+
+		# Login
+		url = self.format_live_server_url('web:auth-login')
+		selenium.get(url)
+		selenium.find_element_by_id('id_username').send_keys('ironman')
+		selenium.find_element_by_id('id_password').send_keys('password')
+		selenium.find_element_by_xpath("//input[@type='submit']").send_keys(Keys.RETURN)
+
+		# Check that login worked properly
+		self.assertIn('Logout', selenium.page_source)
+		self.assertIn('User', selenium.page_source)
+
+		# Click the logout button
+		logout = selenium.find_element_by_link_text('Logout')
+		logout.click()
+
+		# Check that logout worked properly
+		self.assertNotIn('Logout', selenium.page_source)
+		self.assertNotIn('User', selenium.page_source)
+		self.assertIn('Login', selenium.page_source)
+
+	def test_search_results(self):
+		selenium = self.selenium
+
+		# Get the home screen
+		url = self.format_live_server_url('web:index')
+		selenium.get(url)
+
+		# Find search bar
+		search_bar = selenium.find_element_by_name('query')
+
+		# Search for all locations in the US
+		search_bar.send_keys('US')
+		search_bar.send_keys(Keys.RETURN)
+
+		# Check that the search page loaded with results
+		self.assertIn('Listings', selenium.page_source)
+		
+		# Check that each item links to a item detail page
+		items = selenium.find_elements_by_class_name('list-group-item')
+		listing_url_exp = re.compile(r'/listings/\d+/')
+		for item in items:
+			item_url = item.get_attribute('href')
+			self.assertTrue(listing_url_exp.search(item_url))
+
+	def test_search_results_empty(self):
+		selenium = self.selenium
+
+		# Get the home screen
+		url = self.format_live_server_url('web:index')
+		selenium.get(url)
+
+		# Find search bar
+		search_bar = selenium.find_element_by_name('query')
+
+		# Search for an invalid query
+		search_bar.send_keys('ZZ')
+		search_bar.send_keys(Keys.RETURN)
+
+		# Check that the search page loaded with empty results message
+		self.assertIn('Listings', selenium.page_source)
+		self.assertIn('No results found', selenium.page_source)
+
 class HomeViewTests(TestCase):
 	def test_index_view_valid(self):
 		"""

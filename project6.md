@@ -4,6 +4,7 @@
 - http://www.seleniumhq.org/
 - http://agiliq.com/blog/2014/09/selenium-testing/
 - https://medium.com/@unary/django-views-automated-testing-with-selenium-d9df95bdc926#.nxqg58i9o
+- http://selenium-python.readthedocs.io/locating-elements.html
 
 ## Digital Ocean
 - https://www.digitalocean.com/community/tutorials/how-to-create-your-first-digitalocean-droplet-virtual-server
