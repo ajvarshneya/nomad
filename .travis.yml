@@ -1,0 +1,42 @@
+# Based on Travis docker example: https://docs.travis-ci.com/user/docker/
+sudo: required
+
+language: python
+
+# Disable email notifications
+notifications:
+  email: false
+
+services:
+- docker
+
+before_install:
+# Pull the docker images
+- docker pull tp33/django
+- docker pull mysql:5.7.14
+# Make the mysql container
+- mkdir db
+- docker run --name mysql --detach -e MYSQL_ROOT_PASSWORD='$3cureUS' -v `pwd`/db:/var/lib/mysql mysql:5.7.14;
+# Wait for the mysql container to initalize
+- sleep 20
+# Create the database and user
+# Grant all permissions (including test database)
+- >
+  docker run -it --name mysql-cmdline --rm --link mysql:db mysql:5.7.14
+  mysql -uroot -p'$3cureUS' -h db --verbose
+  --execute="
+    create database cs4501 character set utf8;
+    create user 'www'@'%' identified by '\$3cureUS';
+    grant all on cs4501.* to 'www'@'%';
+    grant all on test_cs4501.* to 'www'@'%';"
+
+before_script:
+# Run compose in detached mode so the terminal is free
+- docker-compose up -d
+
+script:
+# Run tests with --noinput to prevent the build from hanging
+- >
+  docker exec -it web_container bash -c "
+  cd /app/nomad/ && 
+  python manage.py test --noinput"
