@@ -33,6 +33,8 @@ before_install:
 before_script:
 # Run compose in detached mode so the terminal is free
 - docker-compose up -d
+# Wait for fixtures to be loaded into search
+- sleep 60
 
 script:
 # Run tests with --noinput to prevent the build from hanging
