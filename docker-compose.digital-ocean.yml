@@ -1,0 +1,69 @@
+kafka:
+    image: spotify/kafka
+    container_name: kafka
+    environment:
+        ADVERTISED_HOST: kafka
+        ADVERTISED_PORT: 9092
+    hostname: kafka
+
+es:
+    image: elasticsearch:2.0
+    container_name: es
+
+batch:
+    image: tp33/django
+    container_name: batch
+    links:
+        - kafka:kafka
+        - es:es
+    volumes:
+        - ./batch:/batch
+    command: >
+            bash -c "cd /batch/ &&
+                    echo 'Starting kafka-es batch' &&
+                    python kafka-batch.py"
+
+models:
+    image: tp33/django
+    external_links:
+        - mysql:db
+    volumes:
+        - ./models-app:/app
+    # log_driver: syslog
+    command: >
+            bash -c "cd /app/nomad/ && 
+                    python manage.py makemigrations models && 
+                    python manage.py migrate && 
+                    python manage.py loaddata db.json && 
+                    echo 'Done with Django manage.py setup.' && 
+                    echo 'Starting model wsgi...' && 
+                    mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
+
+exp:
+    image: tp33/django
+    links:
+        - models:models-api
+        - kafka:kafka
+        - es:es
+    volumes:
+        - ./exp-app:/app
+    # Run `load-search-fixtures.py` wth '&' to run the script in the background
+    command: >
+            bash -c "pip install requests &&
+                    python load-search-fixtures.py &
+                    echo 'Starting exp wsgi...' &&
+                    mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
+
+web:
+    image: tp33/django
+    links:
+        - exp:exp-api
+    volumes:
+        - ./web-app:/app
+    ports:
+        - "8000:8000"
+    command: >
+            bash -c "pip install requests &&
+                pip install selenium &&
+                echo 'Starting web wsgi...' &&
+                mod_wsgi-express start-server --working-directory /app/nomad --reload-on-changes /app/nomad/nomad/wsgi.py"
