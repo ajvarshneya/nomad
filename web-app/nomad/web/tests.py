@@ -176,6 +176,104 @@ class IntegrationTests(LiveServerTestCase):
 			# Go back
 			selenium.back()
 
+	def test_create_listing(self):
+		selenium = self.selenium
+
+		# Get login screen
+		url = self.format_live_server_url("web:auth-login")
+		selenium.get(url)
+
+		# Find form elements
+		username = selenium.find_element_by_id('id_username')
+		password = selenium.find_element_by_id('id_password')
+		submit = selenium.find_element_by_xpath("//input[@type='submit']")
+
+		# Submit the login form
+		username.send_keys('ironman')
+		password.send_keys('password')
+		submit.send_keys(Keys.RETURN)
+
+		# Check that the user is signed in
+		self.assertIn('Logout', selenium.page_source)
+		self.assertIn('User', selenium.page_source)
+		self.assertNotIn('Login', selenium.page_source)
+
+		url = self.format_live_server_url("web:listings-create")
+		selenium.get(url)
+
+		submit = selenium.find_element_by_xpath("//input[@type='submit']")
+		listing_title = selenium.find_element_by_id('id_title')
+		listing_street = selenium.find_element_by_id('id_street')
+		listing_city = selenium.find_element_by_id('id_city')
+		listing_country = selenium.find_element_by_id('id_country')
+		listing_zip = selenium.find_element_by_id('id_zipcode')
+		listing_beds = selenium.find_element_by_id('id_beds')
+		listing_baths = selenium.find_element_by_id('id_baths')
+		listing_price = selenium.find_element_by_id('id_price')
+
+		listing_title.send_keys('Testing Listing')
+		listing_street.send_keys('Testing Street')
+		listing_city.send_keys('Testing City')
+		listing_country.send_keys('Testing Country')
+		listing_zip.send_keys('90210')
+		listing_beds.send_keys('99')
+		listing_baths.send_keys('99')
+		listing_price.send_keys('1337')
+		submit.send_keys(Keys.RETURN)
+
+		self.assertIn('Info', selenium.page_source)
+		self.assertIn('Address', selenium.page_source)
+		self.assertIn('Reviews', selenium.page_source)
+
+		self.assertIn('Testing Listing', selenium.page_source)
+		self.assertIn('Testing Street', selenium.page_source)
+		self.assertIn('Testing City', selenium.page_source)
+		self.assertIn('Testing Country', selenium.page_source)
+		self.assertIn('90210', selenium.page_source)
+		self.assertIn('99', selenium.page_source)
+		self.assertIn('1337', selenium.page_source)
+
+def test_logout_from_listing(self):
+		selenium = self.selenium
+
+		# Get listing screen
+		url = 'http://localhost:8000/listings/1/'
+		selenium.get(url)
+
+
+
+		# Click login
+		login = selenium.find_element_by_link_text('Login')
+		login.click()
+
+		# Find form elements
+		username = selenium.find_element_by_id('id_username')
+		password = selenium.find_element_by_id('id_password')
+		submit = selenium.find_element_by_xpath("//input[@type='submit']")
+
+		# Submit the login form
+		username.send_keys('ironman')
+		password.send_keys('password')
+		submit.send_keys(Keys.RETURN)
+
+		#Logout
+		login = selenium.find_element_by_link_text('Logout')
+		login.click()
+
+
+		#Check
+		self.assertIn('Info', selenium.page_source)
+		self.assertIn('Address', selenium.page_source)
+		self.assertIn('Reviews', selenium.page_source)
+
+		self.assertIn('Beach House', selenium.page_source)
+		self.assertIn('beach street', selenium.page_source)
+		self.assertIn('beach city', selenium.page_source)
+		self.assertIn('US', selenium.page_source)
+		self.assertIn('12345', selenium.page_source)
+		self.assertIn('4', selenium.page_source)
+		self.assertIn('4.5', selenium.page_source)
+
 class HomeViewTests(TestCase):
 	def test_index_view_valid(self):
 		"""
