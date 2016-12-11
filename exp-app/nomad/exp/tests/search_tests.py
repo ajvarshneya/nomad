@@ -62,7 +62,7 @@ class SearchExpTests(TestCase):
 		listing_id = result['id']
 
 		# Wait for a bit so the consumer has time to receive the message
-		time.sleep(1)
+		time.sleep(3)
 
 		# Check that a message was received
 		self.assertEqual(len(kafka_results), 1)
