@@ -2,7 +2,7 @@
 
 ## Features
 
-#### 1. Hosting on DigitalOcean ([online](http://138.197.36.61:8000/))
+#### 1. Hosting on DigitalOcean (~~[online](http://138.197.36.61:8000/)~~ Droplet was deleted)
 
 The site was hosted on DigitalOcean in a droplet. The droplet runs an instance of docker and hosts all containers required to run the site. Initially the smaller droplets were running out of memory, so a larger droplet was used (Ubuntu 16.04.1 2GB Memory / 20GB Disk).
 
@@ -56,4 +56,4 @@ The integration tests were added to the `web` container, so they can be run in t
 
 ## DigitalOcean link
 
-The DigitalOcean droplet can be accessed [here](http://138.197.36.61:8000/).
+~~The DigitalOcean droplet can be accessed [here](http://138.197.36.61:8000/)~~ Droplet was deleted.
